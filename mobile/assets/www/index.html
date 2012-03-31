@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta name="viewport" content="width=screen.width; user-scalable=no" />
+	<title>Don Tracker</title>
+	
+	<link rel="stylesheet" href="jquery.mobile/jquery.mobile-1.0.1.css" type="text/css">
+      <script type="text/javascript" src="jquery.mobile/jquery-1.6.4.min"></script>
+      <script type="text/javascript" src="jquery.mobile/jquery.mobile-1.0.1.js"></script>
+      <script type="text/javascript" charset="utf-8" src="phonegap-1.4.1.js"></script>
+      
+</head>
+<body>
+	<div data-role="page" id="main">
+		<div data-role="header" data-position="inline" style="text-align:left"> 
+			<p style="margin-left:1em">Current Location: <span id="currentloc">?</span></p>
+			<a href="#changeloc" data-corners="false" class="ui-btn-right" style="margin-top:.5em">Change</a>
+		</div>
+		<div data-role="content">
+			<ul data-role="listview" id="sightingslist"></ul>
+		</div>
+	</div>
+	
+	<div data-role="page" id="changeloc">
+		<div data-role="header">
+			<a data-rel="back" data-corners="false">Back</a>
+			<h1>Change Location</h1>
+		</div>
+		
+		<div data-role="fieldcontain">
+		<label for="select-rez" class="select">Residence:</label>
+		<select name="select-rez" id="select-rez">
+			<option value="MKV">MKV</option>
+			<option value="REV">REV</option>
+			<option value="V1">V1</option><!-- More rezzes coming soon! -->
+		</select>
+		
+		<label for="select-area-mkv" class="select">Quad:</label>
+		<select name="select-area-mkv" id="select-area-mkv">
+			<option value="N">North</option>
+			<option value="S">South</option>
+			<option value="E">East</option>
+			<option value="W">West</option>
+		</select>
+		
+		</div>
+		
+	</div>
+	
+	<div data-role="page" id="addsighting">
+	
+	</div>
+	
+	<div data-role="page" id="options">
+	
+	</div>
+</body>
+</html>
