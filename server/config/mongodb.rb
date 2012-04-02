@@ -1,6 +1,6 @@
 APP_ENV ||= 'development'
 require 'mongo_mapper'
-
+  
 if APP_ENV == 'development'
   MongoMapper.connection = Mongo::Connection.new('localhost', 27017)
   MongoMapper.database = "UW-Don-Tracker-Dev"
