@@ -65,9 +65,12 @@ class Device
     self.to_json(:only => API_PUBLIC_ATTRS)
   end
 
-  def update_attributes_from_public params
-    filtered_params = params.select { |key, value| API_UPDATABLE_ATTRS.include? key.to_sym }
+  def update_attributes_from_public public_params = {}, safe_params = {}
+    filtered_params = public_params.select { |key, value| API_UPDATABLE_ATTRS.include? key.to_sym }
+    filtered_params += safe_params
+
     self.update_attributes filtered_params unless filtered_params.empty?
+    self.save
     return self
   end
 end

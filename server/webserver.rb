@@ -58,7 +58,8 @@ end
 # Creates and returns a new Device (JSON)
 post '/device' do
   content_type :json
-  Device.create({
+  device = Device.new
+  device.update_attributes_from_public(params, {
     :ip_addresses => [request.ip],
     :user_agent   => request.user_agent,
   }).to_public_json
