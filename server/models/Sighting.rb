@@ -12,7 +12,7 @@ class Sighting
   key :building,  String,  :required => true
 
   # Report info
-  key :danger_level,  Integer, :required => true
+  key :danger_level,  String, :required => true
 
   timestamps!
   attr_accessible :residence, :area, :floor, :building, :danger_level
