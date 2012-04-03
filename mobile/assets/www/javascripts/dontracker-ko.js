@@ -1,4 +1,4 @@
-$(function(){
+$(function(){;
 
   function Sighting(options) {
     var self = this;
@@ -55,7 +55,12 @@ $(function(){
         window.localStorage.setItem("last_updated_at", current_time);
         self.last_updated_at(current_time);
       });
-    }
+    };
+    
+    self.clearStorage = function(){
+      window.localStorage.clear();
+      window.location.reload(true);
+    };
   };
 
   ko.applyBindings(new SightingsViewModel());
