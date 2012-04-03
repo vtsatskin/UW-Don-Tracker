@@ -9,6 +9,7 @@
       <script type="text/javascript" src="jquery.mobile/jquery.mobile-1.0.1.js"></script>
       <script type="text/javascript" charset="utf-8" src="phonegap-1.4.1.js"></script>
       
+      <script type="text/javascript" src="helper.js"></script>
       <script type="text/javascript" src="dontracker.js"></script>
       
 </head>
@@ -176,6 +177,7 @@
 			</div>
 			<label for='dangerlevel' class='select'>Danger Level</label>
 			<select id='dangerlevel' data-corners="false">
+				<option value='default' disabled='disabled'>Choose</option>
 				<option value="H">High</option>
 				<option value="M">Medium</option>
 				<option value="L">Low</option>
@@ -242,7 +244,7 @@
 	
 	<div data-role="page" id="options">
 		<div data-role="header">
-			<a data-rel="back" data-corners="false">Back</a>
+			<a data-rel="back" id="optionsback" data-corners="false">Back</a><!-- Add save features! -->
 			<h1>Options</h1>
 		</div>
 	</div>

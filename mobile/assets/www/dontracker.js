@@ -41,7 +41,6 @@ $(function(){
 	
 	//Save data, update mainscreen, return to mainscreen
 	$('#save').click(function(){
-		/*$.post('10.0.0.7/sighting', { quad: , floor: , build: , residence: ,});*/
 		window.localStorage.setItem("currentres", $('#residence').val());
 		window.localStorage.setItem("currentarea", $('#area').val());
 		if($('#residence').val() == "V1")
@@ -80,63 +79,43 @@ $(function(){
 		else if($('#residence_s').val() == "MKV")
 			{
 				$("#floorselectormkv_s").css('display', 'block');
+				
 			}
 		else if($('#residence_s').val() == "REV")
 		{
 			$("#floorselectorrev_s").css('display', 'block');
 		}
-			
 	});
 	$('#dangerlevel').change(function(){
 		$('#submitdiv').css('display', 'block');
 	});
 	$('#submit').click(function(){
-		//TODO implement db functionality
+		/*$.post('10.0.0.7/sighting', { quad: , floor: , build: , residence: ,});*/
+		var residence = $('residence_s').val();
+		var building = null;
+		var floor = null;
+		/*if (residence == "V1")
+			{
+				building = $('#buildingv1_s').val();
+				floor = $('#floorv1_s').val();
+			}
+		else if (residence == "MKV")			
+				floor = $('#floormkv_s').val();
+		else if (residence == "REV")
+			{
+				floor $('#floorrev_s').val();
+			}*/
+			
+		debugger;
+		$.post(serveraddress + "/sighting", {residence: "V1", area: "S"/*$('#area_s').val()*/ , building: "4", floor: 5,}, 'json')
+		.success(function(){
+			alert("worked bro");					
+		})
+		.error(function(err){
+			alert(err);
+		});
 	});
 });
 
 
 
-////////////////////////////////////////////////////////////////////////
-//																	  //
-//							Helper Functions:						  //
-//																	  //
-////////////////////////////////////////////////////////////////////////
-function updateuserloc()
-{
-	var userloc = "Unknown";
-	if(window.localStorage.getItem("currentres") == "V1")
-		{
-			userloc = "V1 " + window.localStorage.getItem("currentarea") + 
-				window.localStorage.getItem("currentbuilding") + " Floor " + window.localStorage.getItem("currentfloor");
-		}
-	else if (window.localStorage.getItem("currentres") != null)
-		{
-			userloc = window.localStorage.getItem("currentres");
-			switch (window.localStorage.getItem("currentarea"))
-			{
-			case "N":
-				userloc += " North Floor ";
-				break;
-			case "S":
-				userloc += " South Floor ";
-				break;
-			case "W":
-				userloc += " West Floor ";
-				break;
-			case "E":
-				userloc += " East Floor ";
-				break;
-			default:
-				userloc = " Error ";
-				break;
-			}
-			userloc += window.localStorage.getItem("currentfloor");
-		}
-	$('#currentloc').html(userloc);
-}
-
-function refreshlist()
-{
-	
-}
