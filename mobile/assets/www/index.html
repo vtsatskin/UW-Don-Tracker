@@ -247,6 +247,54 @@
 			<a data-rel="back" id="optionsback" data-corners="false">Back</a><!-- Add save features! -->
 			<h1>Options</h1>
 		</div>
+		<label for="collapsibleoptions">Notifications:</label>
+		<div id="collapsibleoptions" data-role="collapsible-set" data-mini="true">
+			<div data-role="collapsible">
+				<h3>High Danger Alert (Red Header)</h3>
+				<fieldset data-role="controlgroup" data-corners="false">
+					<input type="radio" id="dononfloor" value="1" checked="checked"/>
+						<label for="dononfloor">Any Don On My Floor</label>
+					<input type="radio" id="doninbuilding" value="2"/>
+						<label for="doninbuilding">Any Don In My Building</label>
+					<input type="radio" id="dononfloor_danger" value="3"/>
+						<label for="dononfloor_danger">Dons Marked as Dangerous On My Floor</label>
+					<input type="radio" id="doninbuilding_high" value="4"/>
+						<label for="doninbuilding_high">Dons Marked as Dangerous In My Building</label>
+				</fieldset>
+					<input type="checkbox" id="ignorelowthreat"/>
+						<label for="ignorelowthreat">Ignore Dons Marked Low Threat</label>
+					<input type="checkbox" id="overwriteyellow" checked="checked"/>
+						<label for="overwriteyellow">Overwrite Medium Alterts</label>
+			</div>
+			<div data-role="collapsible">
+				<h3>Low Danger Alert (Yellow Header)</h3>
+				<fieldset data-role="controlgroup" data-corners="false">
+					<input type="radio" id="dononfloor_low" value="1"/>
+						<label for="dononfloor_low">Any Don On My Floor</label>
+					<input type="radio" id="doninbuilding_low" value="2" checked="checked"/>
+						<label for="doninbuilding_low">Any Don In My Building</label>
+					<input type="radio" id="dononfloor_danger_low" value="3"/>
+						<label for="dononfloor_danger_low">Dons Marked as Dangerous On My Floor</label>
+					<input type="radio" id="doninbuilding_danger_low" value="4"/>
+						<label for="doninbuilding_danger_low">Dons Marked as Dangerous In My Building</label>
+				</fieldset>
+			</div>
+			<div data-role="collapsible">
+				<h3>Sound</h3>
+				<fieldset data-role="controlgroup" data-corners="false">
+					<select id="soundtoplay">
+						<option value="INSERT_VALUE_HERE">Sound not yet implemented</option>
+					</select>
+					<input type="checkbox" id="soundforhighdanger" checked="checked" />
+						<label for="soundforhighdanger">Play Sound on High Alert</label>
+					<input type="checkbox" id="soundforlowdanger" />
+						<label for="soundforlowdanger">Play Sound on Low Danger</label>
+				</fieldset>
+			</div>
+		</div>
+		<hr>
+		<a href="#" data-role='button'>About</a>
+		<a href='#' data-role="button">Feedback</a>
 	</div>
 </body>
 </html>
