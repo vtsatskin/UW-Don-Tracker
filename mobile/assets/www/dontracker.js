@@ -102,14 +102,14 @@ $(function(){
 				floor = $('#floormkv_s').val();
     } else if (residence == "REV") {
 				floor = $('#floorrev_s').val();
-		}
-    debugger;
+		} 
 		$.post(serveraddress + "/sighting", { residence: residence, area: area , building: building, floor: floor,}, 'json')
   		.success(function(data){
         alert('worked');
   			console.log(data);					
   		})
   		.error(function(data){
+        alert('did not work: ' + data.dataResponse);
   			console.log(data.dataResponse);
   		});
     debugger;
