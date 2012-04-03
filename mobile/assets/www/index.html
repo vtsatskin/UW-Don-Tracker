@@ -1,300 +1,327 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
-<head>
-	<meta name="viewport" content="width=screen.width; user-scalable=no" />
-	<title>Don Tracker</title>
-	
-	<link rel="stylesheet" href="jquery.mobile/jquery.mobile-1.0.1.css" type="text/css">
-      <script type="text/javascript" src="jquery.mobile/jquery-1.6.4.min"></script>
-      <script type="text/javascript" src="jquery.mobile/jquery.mobile-1.0.1.js"></script>
-      <script type="text/javascript" charset="utf-8" src="phonegap-1.4.1.js"></script>
-      
-      <script type="text/javascript" src="helper.js"></script>
-      <script type="text/javascript" src="dontracker.js"></script>
-      
-</head>
-<body>
-	<div data-role="page" id="main">
-		<div data-role="header" data-position="inline" data-position="fixed" style="text-align:left"> 
-			<p style="margin-left:1em">Location: <span id="currentloc">?</span></p>
-			<a href="#changeloc" data-corners="false" class="ui-btn-right" style="margin-top:.5em">Change</a>
-			<div data-role="navbar" data-iconpos="bottom">
-				<ul>
-					<li><a href="#addsighting" data-icon="plus">Add</a>
-					<li><a href="#filterpage" data-icon="search">Filter</a></li>
-					<li><a href="#refresh" data-icon="refresh">Refresh</a></li>
-					<li><a href="#options" data-icon="gear">Options</a></li>
-				</ul>
-			</div>
-		</div>
-		<div data-role="content">
-			<ul data-role="listview" id="sightingslist" class="ui-listview ui-listview-inset ui-corner-all ui-shadow">
-			
-			</ul>
-		</div>
-	</div>
-	
-	<div data-role="page" id="changeloc">
-		<div data-role="header">
-			<a data-rel="back" data-corners="false">Back</a>
-			<h1>Change Location</h1>
-		</div>
-		
-		<div data-role="fieldcontain" id="locchooser">
-			<label for="residence" class="select">Residence:</label>
-			<select id="residence" data-corners="false">
-				<option value="default" disabled="disabled">Choose</option>
-				<option value="MKV">MKV</option>
-				<option value="REV">REV</option>
-				<option value="V1">V1</option><!-- More rezzes coming soon! -->
-			</select>
-			
-				<label for='area' class='select'>Quad:</label>
-				<select id='area' data-corners="false">
-					<option value='default' disabled='disabled'>Choose</option>
-					<option value='N'>North</option>
-					<option value='S'>South</option>
-					<option value='E'>East</option>
-					<option value='W'>West</option>
-				</select>
-			<div id="buildingselectorv1" style="display:none">
-				<label for='buildingv1' class='select'>Building</label>
-				<select id='buildingv1' data-corners="false">
-					<option value ='default' disabled='disabled'>Choose</option>
-					<option value='1'>1</option>
-					<option value='2'>2</option>
-					<option value='3'>3</option>
-					<option value='4'>4</option>
-					<option value='5'>5</option>
-					<option value='6'>6</option>
-					<option value='7'>7</option>
-					<option value='8'>8</option>
-				</select>
-			</div>
-			<div id="floorselectorv1">
-				<label for='floorv1' class='select'>Floor</label>
-				<select id='floorv1' data-corners="false">
-					<option value ='default' disabled='disabled'>Choose</option>
-					<option value='0'>Basement</option>
-					<option value='1'>1</option>
-					<option value='2'>2</option>
-					<option value='3'>3</option>
-				</select>
-			</div>
-			<div id="floorselectormkv" style="display:none">
-				<label for='floormkv' class='select'>Floor</label>
-				<select id='floormkv' data-corners="false">
-					<option value ='default' disabled='disabled'>Choose</option>
-					<option value='1'>1</option>
-					<option value='2'>2</option>
-					<option value='3'>3</option>
-					<option value='4'>4</option>
-				</select>
-			</div>
-			<div id="floorselectorrev" style="display:none">
-				<label for='floorrev' class='select'>Floor</label>
-				<select id='floorrev' data-corners="false">
-					<option value ='default' disabled='disabled'>Choose</option>
-					<option value='1'>1</option>
-					<option value='2'>2</option>
-					<option value='3'>3</option>
-					<option value='4'>4</option>
-					<option value='5'>5</option>
-				</select>
-			</div>
-			<div id='savediv' style="display:none"><button data-theme='b' data-inline="true" id="save">Save</button></div>
-		</div>
-		
-	</div>
-	
-	<div data-role="page" id="addsighting">
-		<div data-role="header">
-			<a data-rel="back" data-corners="false">Back</a>
-			<h1>Add Sighting</h1>
-		</div>
-		
-		<div data-role="fieldcontain" id="sightingadder">
-			<label for="residence_s" class="select">Residence:</label>
-			<select id="residence_s" data-corners="false">
-				<option value="default" disabled="disabled">Choose</option>
-				<option value="MKV">MKV</option>
-				<option value="REV">REV</option>
-				<option value="V1">V1</option><!-- More rezzes coming soon! -->
-			</select>
-			
-				<label for='area_s' class='select'>Quad:</label>
-				<select id='area_s' data-corners="false">
-					<option value='default' disabled='disabled'>Choose</option>
-					<option value='N'>North</option>
-					<option value='S'>South</option>
-					<option value='E'>East</option>
-					<option value='W'>West</option>
-				</select>
-			<div id="buildingselectorv1_s" style="display:none">
-				<label for='buildingv1_s' class='select'>Building</label>
-				<select id='buildingv1_s' data-corners="false">
-					<option value ='default' disabled='disabled'>Choose</option>
-					<option value='1'>1</option>
-					<option value='2'>2</option>
-					<option value='3'>3</option>
-					<option value='4'>4</option>
-					<option value='5'>5</option>
-					<option value='6'>6</option>
-					<option value='7'>7</option>
-					<option value='8'>8</option>
-				</select>
-			</div>
-			<div id="floorselectorv1_s">
-				<label for='floorv1_s' class='select'>Floor</label>
-				<select id='floorv1_s' data-corners="false">
-					<option value ='default' disabled='disabled'>Choose</option>
-					<option value='0'>Basement</option>
-					<option value='1'>1</option>
-					<option value='2'>2</option>
-					<option value='3'>3</option>
-				</select>
-			</div>
-			<div id="floorselectormkv_s" style="display:none">
-				<label for='floormkv_s' class='select'>Floor</label>
-				<select id='floormkv_s' data-corners="false">
-					<option value ='default' disabled='disabled'>Choose</option>
-					<option value='1'>1</option>
-					<option value='2'>2</option>
-					<option value='3'>3</option>
-					<option value='4'>4</option>
-				</select>
-			</div>
-			<div id="floorselectorrev_s" style="display:none">
-				<label for='floorrev_s' class='select'>Floor</label>
-				<select id='floorrev_s' data-corners="false">
-					<option value ='default' disabled='disabled'>Choose</option>
-					<option value='1'>1</option>
-					<option value='2'>2</option>
-					<option value='3'>3</option>
-					<option value='4'>4</option>
-					<option value='5'>5</option>
-				</select>
-			</div>
-			<label for='dangerlevel' class='select'>Danger Level</label>
-			<select id='dangerlevel' data-corners="false">
-				<option value='default' disabled='disabled'>Choose</option>
-				<option value="H">High</option>
-				<option value="M">Medium</option>
-				<option value="L">Low</option>
-			</select>
-			<div id='submitdiv' style="display:none"><button data-theme='b' data-inline="true" id="submit">Submit</button></div>
-		</div>
-	</div>
-	
-	<div data-role="page" id="filterpage">
-		<div data-role="header">
-			<a data-rel="back" data-corners="false">Back</a>
-			<h1>Filter Settings</h1>
-		</div>
-		
-		<label for="timefilter">Show Sightings Within the Last X Minutes:</label><!-- This needs a better label -->
-		<input type="range" id="timefilter" value="60" min="1" max="120" data-mini="true" />
-		<hr>
-		<label for="locationfilter_set">Show Sightings From</label>
-		<div id="locationfilter_set" data-role="collapsible-set" data-mini="true">
-			<div data-role="collapsible">
-				<h3>MKV</h3>
-				<fieldset data-role="controlgroup" data-corners="false">
-					<input type="checkbox" id="check_mkvn" />
-						<label for="check_mkvn">North</label>
-					<input type="checkbox" id="check_mkvs" />
-						<label for="check_mkvs">South</label>
-					<input type="checkbox" id="check_mkve" />
-						<label for="check_mkve">East</label>
-					<input type="checkbox" id="check_mkvw" />
-						<label for="check_mkvw">West</label>
-				</fieldset>
-			</div>
-			<div data-role="collapsible">
-				<h3>REV</h3>
-				<fieldset data-role="controlgroup" data-corners="false">
-					<input type="checkbox" id="check_revn" />
-						<label for="check_revn">North</label>
-					<input type="checkbox" id="check_revs" />
-						<label for="check_revs">South</label>
-					<input type="checkbox" id="check_reve" />
-						<label for="check_reve">East</label>
-					<input type="checkbox" id="check_revw" />
-						<label for="check_revw">West</label>
-				</fieldset>
-			</div>
-			<div data-role="collapsible">
-				<h3>V1</h3>
-				<fieldset data-role="controlgroup" data-corners="false">
-					<input type="checkbox" id="check_v1n" />
-						<label for="check_v1n">North</label>
-					<input type="checkbox" id="check_v1s" />
-						<label for="check_v1s">South</label>
-					<input type="checkbox" id="check_v1e" />
-						<label for="check_v1e">East</label>
-					<input type="checkbox" id="check_v1w" />
-						<label for="check_v1w">West</label>
-				</fieldset>
-			</div>
-		<!-- TODO: ADD MORE REZZES! -->		
-		</div>
-		<button style="position:absolute; bottom:0" id="savefilter" data-theme="b">Save</button>
-		
-	</div>
-	
-	<div data-role="page" id="options">
-		<div data-role="header">
-			<a data-rel="back" id="optionsback" data-corners="false">Back</a><!-- Add save features! -->
-			<h1>Options</h1>
-		</div>
-		<label for="collapsibleoptions">Notifications:</label>
-		<div id="collapsibleoptions" data-role="collapsible-set" data-mini="true">
-			<div data-role="collapsible">
-				<h3>High Danger Alert (Red Header)</h3>
-				<fieldset data-role="controlgroup" data-corners="false">
-					<input type="radio" id="dononfloor" value="1" checked="checked"/>
-						<label for="dononfloor">Any Don On My Floor</label>
-					<input type="radio" id="doninbuilding" value="2"/>
-						<label for="doninbuilding">Any Don In My Building</label>
-					<input type="radio" id="dononfloor_danger" value="3"/>
-						<label for="dononfloor_danger">Dons Marked as Dangerous On My Floor</label>
-					<input type="radio" id="doninbuilding_high" value="4"/>
-						<label for="doninbuilding_high">Dons Marked as Dangerous In My Building</label>
-				</fieldset>
-					<input type="checkbox" id="ignorelowthreat"/>
-						<label for="ignorelowthreat">Ignore Dons Marked Low Threat</label>
-					<input type="checkbox" id="overwriteyellow" checked="checked"/>
-						<label for="overwriteyellow">Overwrite Medium Alterts</label>
-			</div>
-			<div data-role="collapsible">
-				<h3>Low Danger Alert (Yellow Header)</h3>
-				<fieldset data-role="controlgroup" data-corners="false">
-					<input type="radio" id="dononfloor_low" value="1"/>
-						<label for="dononfloor_low">Any Don On My Floor</label>
-					<input type="radio" id="doninbuilding_low" value="2" checked="checked"/>
-						<label for="doninbuilding_low">Any Don In My Building</label>
-					<input type="radio" id="dononfloor_danger_low" value="3"/>
-						<label for="dononfloor_danger_low">Dons Marked as Dangerous On My Floor</label>
-					<input type="radio" id="doninbuilding_danger_low" value="4"/>
-						<label for="doninbuilding_danger_low">Dons Marked as Dangerous In My Building</label>
-				</fieldset>
-			</div>
-			<div data-role="collapsible">
-				<h3>Sound</h3>
-				<fieldset data-role="controlgroup" data-corners="false">
-					<select id="soundtoplay">
-						<option value="INSERT_VALUE_HERE">Sound not yet implemented</option>
-					</select>
-					<input type="checkbox" id="soundforhighdanger" checked="checked" />
-						<label for="soundforhighdanger">Play Sound on High Alert</label>
-					<input type="checkbox" id="soundforlowdanger" />
-						<label for="soundforlowdanger">Play Sound on Low Danger</label>
-				</fieldset>
-			</div>
-		</div>
-		<hr>
-		<a href="#" data-role='button'>About</a>
-		<a href='#' data-role="button">Feedback</a>
-	</div>
-</body>
+  <head>
+    <!-- %meta{:content => "width=screen.width; user-scalable=no", :name => "viewport"} -->
+    <title>Don Tracker</title>
+    <link href='lib/jquery.mobile/jquery.mobile-1.0.1.css' rel='stylesheet' type='text/css' />
+    <link href='stylesheets/tracker.css' rel='stylesheet' type='text/css' />
+    <script src='lib/jquery.mobile/jquery-1.6.4.min' type='text/javascript'></script>
+    <script src='lib/jquery.mobile/jquery.mobile-1.0.1.js' type='text/javascript'></script>
+    <script src='lib/phonegap-1.4.1.js' type='text/javascript'></script>
+    <script src='lib/knockout-2.0.0.js' type='text/javascript'></script>
+    <script src='lib/jquery.timeago.js' type='text/javascript'></script>
+    <script src='javascripts/helper.js' type='text/javascript'></script>
+    <!-- %script{:src => "javascripts/dontracker.js", :type => "text/javascript"} -->
+    <script src='javascripts/dontracker-ko.js' type='text/javascript'></script>
+  </head>
+  <body>
+    <div data-role='page' id='main'>
+      <div data-position='fixed' data-role='header' style='text-align:left'>
+        <p style='margin-left:1em'>
+          Location:
+          <span id='currentloc'>?</span>
+        </p>
+        <a class='ui-btn-right' data-corners='false' href='#changeloc' style='margin-top:.5em'>Change</a>
+        <div data-iconpos='bottom' data-role='navbar'>
+          <ul>
+            <li>
+              <a data-icon='plus' href='#addsighting'>Add</a>
+              <li>
+                <a data-icon='search' href='#filterpage'>Filter</a>
+              </li>
+              <li>
+                <a data-bind='click: $root.getSightings' data-icon='refresh' href='#refresh'>Refresh</a>
+              </li>
+              <li>
+                <a data-icon='gear' href='#options'>Options</a>
+              </li>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- / Sightings -->
+      <div data-role='content'>
+        <ul class='ui-listview ui-listview-inset ui-corner-all ui-shadow' data-bind='foreach: sightings' data-role='listview' id='sightingslist'>
+          <li class='ui-li ui-li-static ui-body-c ui-corner-top'>
+            <p class='ui-li-aside ui-li-desc'>
+              <strong data-bind='text: relativeTime'></strong>
+            </p>
+            <h3 class='ui-li-heading' data-bind='text: danger_level'></h3>
+            <p class='ui-li-desc'>
+              <strong>Residence:</strong>
+              <span data-bind='text: residence'></span>
+              <strong>Building:</strong>
+              <span data-bind='text: building'></span>
+              <strong>Area:</strong>
+              <span data-bind='text: area'></span>
+              <strong>Floor:</strong>
+              <span data-bind='text: floor'></span>
+            </p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div data-role='page' id='changeloc'>
+      <div data-role='header'>
+        <a data-corners='false' data-rel='back'>Back</a>
+        <h1>Change Location</h1>
+      </div>
+      <div data-role='fieldcontain' id='locchooser'>
+        <label class='select' for='residence'>Residence:</label>
+        <select data-corners='false' id='residence'>
+          <option disabled='disabled' value='default'>Choose</option>
+          <option value='MKV'>MKV</option>
+          <option value='REV'>REV</option>
+          <option value='V1'>V1</option>
+          <!-- More rezzes coming soon! -->
+        </select>
+        <label class='select' for='area'>Quad:</label>
+        <select data-corners='false' id='area'>
+          <option disabled='disabled' value='default'>Choose</option>
+          <option value='N'>North</option>
+          <option value='S'>South</option>
+          <option value='E'>East</option>
+          <option value='W'>West</option>
+        </select>
+        <div id='buildingselectorv1' style='display:none'>
+          <label class='select' for='buildingv1'>Building</label>
+          <select data-corners='false' id='buildingv1'>
+            <option disabled='disabled' value='default'>Choose</option>
+            <option value='1'>1</option>
+            <option value='2'>2</option>
+            <option value='3'>3</option>
+            <option value='4'>4</option>
+            <option value='5'>5</option>
+            <option value='6'>6</option>
+            <option value='7'>7</option>
+            <option value='8'>8</option>
+          </select>
+        </div>
+        <div id='floorselectorv1'>
+          <label class='select' for='floorv1'>Floor</label>
+          <select data-corners='false' id='floorv1'>
+            <option disabled='disabled' value='default'>Choose</option>
+            <option value='0'>Basement</option>
+            <option value='1'>1</option>
+            <option value='2'>2</option>
+            <option value='3'>3</option>
+          </select>
+        </div>
+        <div id='floorselectormkv' style='display:none'>
+          <label class='select' for='floormkv'>Floor</label>
+          <select data-corners='false' id='floormkv'>
+            <option disabled='disabled' value='default'>Choose</option>
+            <option value='1'>1</option>
+            <option value='2'>2</option>
+            <option value='3'>3</option>
+            <option value='4'>4</option>
+          </select>
+        </div>
+        <div id='floorselectorrev' style='display:none'>
+          <label class='select' for='floorrev'>Floor</label>
+          <select data-corners='false' id='floorrev'>
+            <option disabled='disabled' value='default'>Choose</option>
+            <option value='1'>1</option>
+            <option value='2'>2</option>
+            <option value='3'>3</option>
+            <option value='4'>4</option>
+            <option value='5'>5</option>
+          </select>
+        </div>
+        <div id='savediv' style='display:none'>
+          <button data-inline='true' data-theme='b' id='save'>Save</button>
+        </div>
+      </div>
+    </div>
+    <div data-role='page' id='addsighting'>
+      <div data-role='header'>
+        <a data-corners='false' data-rel='back'>Back</a>
+        <h1>Add Sighting</h1>
+      </div>
+      <div data-role='fieldcontain' id='sightingadder'>
+        <label class='select' for='residence_s'>Residence:</label>
+        <select data-corners='false' id='residence_s'>
+          <option disabled='disabled' value='default'>Choose</option>
+          <option value='MKV'>MKV</option>
+          <option value='REV'>REV</option>
+          <option value='V1'>V1</option>
+          <!-- More rezzes coming soon! -->
+        </select>
+        <label class='select' for='area_s'>Quad:</label>
+        <select data-corners='false' id='area_s'>
+          <option disabled='disabled' value='default'>Choose</option>
+          <option value='N'>North</option>
+          <option value='S'>South</option>
+          <option value='E'>East</option>
+          <option value='W'>West</option>
+        </select>
+        <div id='buildingselectorv1_s' style='display:none'>
+          <label class='select' for='buildingv1_s'>Building</label>
+          <select data-corners='false' id='buildingv1_s'>
+            <option disabled='disabled' value='default'>Choose</option>
+            <option value='1'>1</option>
+            <option value='2'>2</option>
+            <option value='3'>3</option>
+            <option value='4'>4</option>
+            <option value='5'>5</option>
+            <option value='6'>6</option>
+            <option value='7'>7</option>
+            <option value='8'>8</option>
+          </select>
+        </div>
+        <div id='floorselectorv1_s'>
+          <label class='select' for='floorv1_s'>Floor</label>
+          <select data-corners='false' id='floorv1_s'>
+            <option disabled='disabled' value='default'>Choose</option>
+            <option value='0'>Basement</option>
+            <option value='1'>1</option>
+            <option value='2'>2</option>
+            <option value='3'>3</option>
+          </select>
+        </div>
+        <div id='floorselectormkv_s' style='display:none'>
+          <label class='select' for='floormkv_s'>Floor</label>
+          <select data-corners='false' id='floormkv_s'>
+            <option disabled='disabled' value='default'>Choose</option>
+            <option value='1'>1</option>
+            <option value='2'>2</option>
+            <option value='3'>3</option>
+            <option value='4'>4</option>
+          </select>
+        </div>
+        <div id='floorselectorrev_s' style='display:none'>
+          <label class='select' for='floorrev_s'>Floor</label>
+          <select data-corners='false' id='floorrev_s'>
+            <option disabled='disabled' value='default'>Choose</option>
+            <option value='1'>1</option>
+            <option value='2'>2</option>
+            <option value='3'>3</option>
+            <option value='4'>4</option>
+            <option value='5'>5</option>
+          </select>
+        </div>
+        <label class='select' for='dangerlevel'>Danger Level</label>
+        <select data-corners='false' id='dangerlevel'>
+          <option disabled='disabled' value='default'>Choose</option>
+          <option value='H'>High</option>
+          <option value='M'>Medium</option>
+          <option value='L'>Low</option>
+        </select>
+        <div id='submitdiv' style='display:none'>
+          <button data-inline='true' data-theme='b' id='submit'>Submit</button>
+        </div>
+      </div>
+    </div>
+    <div data-role='page' id='filterpage'>
+      <div data-role='header'>
+        <a data-corners='false' data-rel='back'>Back</a>
+        <h1>Filter Settings</h1>
+      </div>
+      <label for='timefilter'>Show Sightings Within the Last X Minutes:</label>
+      <!-- This needs a better label -->
+      <input data-mini='true' id='timefilter' max='120' min='1' type='range' value='60' />
+      <hr>
+        <label for='locationfilter_set'>Show Sightings From</label>
+        <div data-mini='true' data-role='collapsible-set' id='locationfilter_set'>
+          <div data-role='collapsible'>
+            <h3>MKV</h3>
+            <fieldset data-corners='false' data-role='controlgroup'>
+              <input id='check_mkvn' type='checkbox' />
+              <label for='check_mkvn'>North</label>
+              <input id='check_mkvs' type='checkbox' />
+              <label for='check_mkvs'>South</label>
+              <input id='check_mkve' type='checkbox' />
+              <label for='check_mkve'>East</label>
+              <input id='check_mkvw' type='checkbox' />
+              <label for='check_mkvw'>West</label>
+            </fieldset>
+          </div>
+          <div data-role='collapsible'>
+            <h3>REV</h3>
+            <fieldset data-corners='false' data-role='controlgroup'>
+              <input id='check_revn' type='checkbox' />
+              <label for='check_revn'>North</label>
+              <input id='check_revs' type='checkbox' />
+              <label for='check_revs'>South</label>
+              <input id='check_reve' type='checkbox' />
+              <label for='check_reve'>East</label>
+              <input id='check_revw' type='checkbox' />
+              <label for='check_revw'>West</label>
+            </fieldset>
+          </div>
+          <div data-role='collapsible'>
+            <h3>V1</h3>
+            <fieldset data-corners='false' data-role='controlgroup'>
+              <input id='check_v1n' type='checkbox' />
+              <label for='check_v1n'>North</label>
+              <input id='check_v1s' type='checkbox' />
+              <label for='check_v1s'>South</label>
+              <input id='check_v1e' type='checkbox' />
+              <label for='check_v1e'>East</label>
+              <input id='check_v1w' type='checkbox' />
+              <label for='check_v1w'>West</label>
+            </fieldset>
+          </div>
+          <!-- TODO: ADD MORE REZZES! -->
+        </div>
+        <button data-theme='b' id='savefilter' style='position:absolute; bottom:0'>Save</button>
+      </hr>
+    </div>
+    <div data-role='page' id='options'>
+      <div data-role='header'>
+        <a data-corners='false' data-rel='back' id='optionsback'>Back</a>
+        <!-- Add save features! -->
+        <h1>Options</h1>
+      </div>
+      <label for='collapsibleoptions'>Notifications:</label>
+      <div data-mini='true' data-role='collapsible-set' id='collapsibleoptions'>
+        <div data-role='collapsible'>
+          <h3>High Danger Alert (Red Header)</h3>
+          <fieldset data-corners='false' data-role='controlgroup'>
+            <input checked='checked' id='dononfloor' type='radio' value='1' />
+            <label for='dononfloor'>Any Don On My Floor</label>
+            <input id='doninbuilding' type='radio' value='2' />
+            <label for='doninbuilding'>Any Don In My Building</label>
+            <input id='dononfloor_danger' type='radio' value='3' />
+            <label for='dononfloor_danger'>Dons Marked as Dangerous On My Floor</label>
+            <input id='doninbuilding_high' type='radio' value='4' />
+            <label for='doninbuilding_high'>Dons Marked as Dangerous In My Building</label>
+          </fieldset>
+          <input id='ignorelowthreat' type='checkbox' />
+          <label for='ignorelowthreat'>Ignore Dons Marked Low Threat</label>
+          <input checked='checked' id='overwriteyellow' type='checkbox' />
+          <label for='overwriteyellow'>Overwrite Medium Alterts</label>
+        </div>
+        <div data-role='collapsible'>
+          <h3>Low Danger Alert (Yellow Header)</h3>
+          <fieldset data-corners='false' data-role='controlgroup'>
+            <input id='dononfloor_low' type='radio' value='1' />
+            <label for='dononfloor_low'>Any Don On My Floor</label>
+            <input checked='checked' id='doninbuilding_low' type='radio' value='2' />
+            <label for='doninbuilding_low'>Any Don In My Building</label>
+            <input id='dononfloor_danger_low' type='radio' value='3' />
+            <label for='dononfloor_danger_low'>Dons Marked as Dangerous On My Floor</label>
+            <input id='doninbuilding_danger_low' type='radio' value='4' />
+            <label for='doninbuilding_danger_low'>Dons Marked as Dangerous In My Building</label>
+          </fieldset>
+        </div>
+        <div data-role='collapsible'>
+          <h3>Sound</h3>
+          <fieldset data-corners='false' data-role='controlgroup'>
+            <select id='soundtoplay'>
+              <option value='INSERT_VALUE_HERE'>Sound not yet implemented</option>
+            </select>
+            <input checked='checked' id='soundforhighdanger' type='checkbox' />
+            <label for='soundforhighdanger'>Play Sound on High Alert</label>
+            <input id='soundforlowdanger' type='checkbox' />
+            <label for='soundforlowdanger'>Play Sound on Low Danger</label>
+          </fieldset>
+        </div>
+      </div>
+      <hr>
+        <a data-role='button' href='#'>About</a>
+        <a data-role='button' href='#'>Feedback</a>
+      </hr>
+    </div>
+  </body>
 </html>

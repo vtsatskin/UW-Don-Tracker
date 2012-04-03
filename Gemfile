@@ -4,6 +4,7 @@ gem 'sinatra'
 gem 'thin'
 gem 'mongo_mapper'
 gem 'haml'
+gem 'sass'
 
 # gem 'rspec'
 # gem 'rack-test'

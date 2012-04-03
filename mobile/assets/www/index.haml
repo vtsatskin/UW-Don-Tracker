@@ -1,0 +1,264 @@
+!!!
+%html
+  %head
+    / %meta{:content => "width=screen.width; user-scalable=no", :name => "viewport"}
+    %title Don Tracker
+
+    %link{:href => "lib/jquery.mobile/jquery.mobile-1.0.1.css", :rel => "stylesheet", :type => "text/css"}
+    %link{:href => "stylesheets/tracker.css", :rel => "stylesheet", :type => "text/css"}
+
+    %script{:src => "lib/jquery.mobile/jquery-1.6.4.min", :type => "text/javascript"}
+    %script{:src => "lib/jquery.mobile/jquery.mobile-1.0.1.js", :type => "text/javascript"}
+    %script{:src => "lib/phonegap-1.4.1.js", :type => "text/javascript"}
+    %script{:src => "lib/knockout-2.0.0.js", :type => "text/javascript"}
+    %script{:src => "lib/jquery.timeago.js", :type => "text/javascript"}
+    %script{:src => "javascripts/helper.js", :type => "text/javascript"}
+    / %script{:src => "javascripts/dontracker.js", :type => "text/javascript"}
+    %script{:src => "javascripts/dontracker-ko.js", :type => "text/javascript"}
+  %body
+    #main{"data-role" => "page"}
+      %div{"data-position" => "fixed", "data-role" => "header", :style => "text-align:left"}
+        %p{:style => "margin-left:1em"}
+          Location:
+          %span#currentloc ?
+        %a.ui-btn-right{"data-corners" => "false", :href => "#changeloc", :style => "margin-top:.5em"} Change
+        %div{"data-iconpos" => "bottom", "data-role" => "navbar"}
+          %ul
+            %li
+              %a{"data-icon" => "plus", :href => "#addsighting"} Add
+              %li
+                %a{"data-icon" => "search", :href => "#filterpage"} Filter
+              %li
+                %a{"data-icon" => "refresh", "data-bind" => "click: $root.getSightings", :href => "#refresh"} Refresh
+              %li
+                %a{"data-icon" => "gear", :href => "#options"} Options
+
+      // Sightings
+      %div{"data-role" => "content"}
+        %ul#sightingslist.ui-listview.ui-listview-inset.ui-corner-all.ui-shadow{"data-role" => "listview", "data-bind" => "foreach: sightings"}
+          %li.ui-li.ui-li-static.ui-body-c.ui-corner-top
+            %p.ui-li-aside.ui-li-desc
+              %strong{ "data-bind" => "text: relativeTime"}
+            %h3.ui-li-heading{ "data-bind" => "text: danger_level"}
+            %p.ui-li-desc
+              %strong Residence: 
+              %span{ "data-bind" => "text: residence"}
+              %strong Building:
+              %span{ "data-bind" => "text: building"}
+              %strong Area:
+              %span{ "data-bind" => "text: area"}
+              %strong Floor:
+              %span{ "data-bind" => "text: floor"}
+
+    #changeloc{"data-role" => "page"}
+      %div{"data-role" => "header"}
+        %a{"data-corners" => "false", "data-rel" => "back"} Back
+        %h1 Change Location
+      #locchooser{"data-role" => "fieldcontain"}
+        %label.select{:for => "residence"} Residence:
+        %select#residence{"data-corners" => "false"}
+          %option{:disabled => "disabled", :value => "default"} Choose
+          %option{:value => "MKV"} MKV
+          %option{:value => "REV"} REV
+          %option{:value => "V1"} V1
+          / More rezzes coming soon!
+        %label.select{:for => "area"} Quad:
+        %select#area{"data-corners" => "false"}
+          %option{:disabled => "disabled", :value => "default"} Choose
+          %option{:value => "N"} North
+          %option{:value => "S"} South
+          %option{:value => "E"} East
+          %option{:value => "W"} West
+        #buildingselectorv1{:style => "display:none"}
+          %label.select{:for => "buildingv1"} Building
+          %select#buildingv1{"data-corners" => "false"}
+            %option{:disabled => "disabled", :value => "default"} Choose
+            %option{:value => "1"} 1
+            %option{:value => "2"} 2
+            %option{:value => "3"} 3
+            %option{:value => "4"} 4
+            %option{:value => "5"} 5
+            %option{:value => "6"} 6
+            %option{:value => "7"} 7
+            %option{:value => "8"} 8
+        #floorselectorv1
+          %label.select{:for => "floorv1"} Floor
+          %select#floorv1{"data-corners" => "false"}
+            %option{:disabled => "disabled", :value => "default"} Choose
+            %option{:value => "0"} Basement
+            %option{:value => "1"} 1
+            %option{:value => "2"} 2
+            %option{:value => "3"} 3
+        #floorselectormkv{:style => "display:none"}
+          %label.select{:for => "floormkv"} Floor
+          %select#floormkv{"data-corners" => "false"}
+            %option{:disabled => "disabled", :value => "default"} Choose
+            %option{:value => "1"} 1
+            %option{:value => "2"} 2
+            %option{:value => "3"} 3
+            %option{:value => "4"} 4
+        #floorselectorrev{:style => "display:none"}
+          %label.select{:for => "floorrev"} Floor
+          %select#floorrev{"data-corners" => "false"}
+            %option{:disabled => "disabled", :value => "default"} Choose
+            %option{:value => "1"} 1
+            %option{:value => "2"} 2
+            %option{:value => "3"} 3
+            %option{:value => "4"} 4
+            %option{:value => "5"} 5
+        #savediv{:style => "display:none"}
+          %button#save{"data-inline" => "true", "data-theme" => "b"} Save
+    #addsighting{"data-role" => "page"}
+      %div{"data-role" => "header"}
+        %a{"data-corners" => "false", "data-rel" => "back"} Back
+        %h1 Add Sighting
+      #sightingadder{"data-role" => "fieldcontain"}
+        %label.select{:for => "residence_s"} Residence:
+        %select#residence_s{"data-corners" => "false"}
+          %option{:disabled => "disabled", :value => "default"} Choose
+          %option{:value => "MKV"} MKV
+          %option{:value => "REV"} REV
+          %option{:value => "V1"} V1
+          / More rezzes coming soon!
+        %label.select{:for => "area_s"} Quad:
+        %select#area_s{"data-corners" => "false"}
+          %option{:disabled => "disabled", :value => "default"} Choose
+          %option{:value => "N"} North
+          %option{:value => "S"} South
+          %option{:value => "E"} East
+          %option{:value => "W"} West
+        #buildingselectorv1_s{:style => "display:none"}
+          %label.select{:for => "buildingv1_s"} Building
+          %select#buildingv1_s{"data-corners" => "false"}
+            %option{:disabled => "disabled", :value => "default"} Choose
+            %option{:value => "1"} 1
+            %option{:value => "2"} 2
+            %option{:value => "3"} 3
+            %option{:value => "4"} 4
+            %option{:value => "5"} 5
+            %option{:value => "6"} 6
+            %option{:value => "7"} 7
+            %option{:value => "8"} 8
+        #floorselectorv1_s
+          %label.select{:for => "floorv1_s"} Floor
+          %select#floorv1_s{"data-corners" => "false"}
+            %option{:disabled => "disabled", :value => "default"} Choose
+            %option{:value => "0"} Basement
+            %option{:value => "1"} 1
+            %option{:value => "2"} 2
+            %option{:value => "3"} 3
+        #floorselectormkv_s{:style => "display:none"}
+          %label.select{:for => "floormkv_s"} Floor
+          %select#floormkv_s{"data-corners" => "false"}
+            %option{:disabled => "disabled", :value => "default"} Choose
+            %option{:value => "1"} 1
+            %option{:value => "2"} 2
+            %option{:value => "3"} 3
+            %option{:value => "4"} 4
+        #floorselectorrev_s{:style => "display:none"}
+          %label.select{:for => "floorrev_s"} Floor
+          %select#floorrev_s{"data-corners" => "false"}
+            %option{:disabled => "disabled", :value => "default"} Choose
+            %option{:value => "1"} 1
+            %option{:value => "2"} 2
+            %option{:value => "3"} 3
+            %option{:value => "4"} 4
+            %option{:value => "5"} 5
+        %label.select{:for => "dangerlevel"} Danger Level
+        %select#dangerlevel{"data-corners" => "false"}
+          %option{:disabled => "disabled", :value => "default"} Choose
+          %option{:value => "H"} High
+          %option{:value => "M"} Medium
+          %option{:value => "L"} Low
+        #submitdiv{:style => "display:none"}
+          %button#submit{"data-inline" => "true", "data-theme" => "b"} Submit
+    #filterpage{"data-role" => "page"}
+      %div{"data-role" => "header"}
+        %a{"data-corners" => "false", "data-rel" => "back"} Back
+        %h1 Filter Settings
+      %label{:for => "timefilter"} Show Sightings Within the Last X Minutes:
+      / This needs a better label
+      %input#timefilter{"data-mini" => "true", :max => "120", :min => "1", :type => "range", :value => "60"}/
+      %hr
+        %label{:for => "locationfilter_set"} Show Sightings From
+        #locationfilter_set{"data-mini" => "true", "data-role" => "collapsible-set"}
+          %div{"data-role" => "collapsible"}
+            %h3 MKV
+            %fieldset{"data-corners" => "false", "data-role" => "controlgroup"}
+              %input#check_mkvn{:type => "checkbox"}/
+              %label{:for => "check_mkvn"} North
+              %input#check_mkvs{:type => "checkbox"}/
+              %label{:for => "check_mkvs"} South
+              %input#check_mkve{:type => "checkbox"}/
+              %label{:for => "check_mkve"} East
+              %input#check_mkvw{:type => "checkbox"}/
+              %label{:for => "check_mkvw"} West
+          %div{"data-role" => "collapsible"}
+            %h3 REV
+            %fieldset{"data-corners" => "false", "data-role" => "controlgroup"}
+              %input#check_revn{:type => "checkbox"}/
+              %label{:for => "check_revn"} North
+              %input#check_revs{:type => "checkbox"}/
+              %label{:for => "check_revs"} South
+              %input#check_reve{:type => "checkbox"}/
+              %label{:for => "check_reve"} East
+              %input#check_revw{:type => "checkbox"}/
+              %label{:for => "check_revw"} West
+          %div{"data-role" => "collapsible"}
+            %h3 V1
+            %fieldset{"data-corners" => "false", "data-role" => "controlgroup"}
+              %input#check_v1n{:type => "checkbox"}/
+              %label{:for => "check_v1n"} North
+              %input#check_v1s{:type => "checkbox"}/
+              %label{:for => "check_v1s"} South
+              %input#check_v1e{:type => "checkbox"}/
+              %label{:for => "check_v1e"} East
+              %input#check_v1w{:type => "checkbox"}/
+              %label{:for => "check_v1w"} West
+          / TODO: ADD MORE REZZES!
+        %button#savefilter{"data-theme" => "b", :style => "position:absolute; bottom:0"} Save
+    #options{"data-role" => "page"}
+      %div{"data-role" => "header"}
+        %a#optionsback{"data-corners" => "false", "data-rel" => "back"} Back
+        / Add save features!
+        %h1 Options
+      %label{:for => "collapsibleoptions"} Notifications:
+      #collapsibleoptions{"data-mini" => "true", "data-role" => "collapsible-set"}
+        %div{"data-role" => "collapsible"}
+          %h3 High Danger Alert (Red Header)
+          %fieldset{"data-corners" => "false", "data-role" => "controlgroup"}
+            %input#dononfloor{:checked => "checked", :type => "radio", :value => "1"}/
+            %label{:for => "dononfloor"} Any Don On My Floor
+            %input#doninbuilding{:type => "radio", :value => "2"}/
+            %label{:for => "doninbuilding"} Any Don In My Building
+            %input#dononfloor_danger{:type => "radio", :value => "3"}/
+            %label{:for => "dononfloor_danger"} Dons Marked as Dangerous On My Floor
+            %input#doninbuilding_high{:type => "radio", :value => "4"}/
+            %label{:for => "doninbuilding_high"} Dons Marked as Dangerous In My Building
+          %input#ignorelowthreat{:type => "checkbox"}/
+          %label{:for => "ignorelowthreat"} Ignore Dons Marked Low Threat
+          %input#overwriteyellow{:checked => "checked", :type => "checkbox"}/
+          %label{:for => "overwriteyellow"} Overwrite Medium Alterts
+        %div{"data-role" => "collapsible"}
+          %h3 Low Danger Alert (Yellow Header)
+          %fieldset{"data-corners" => "false", "data-role" => "controlgroup"}
+            %input#dononfloor_low{:type => "radio", :value => "1"}/
+            %label{:for => "dononfloor_low"} Any Don On My Floor
+            %input#doninbuilding_low{:checked => "checked", :type => "radio", :value => "2"}/
+            %label{:for => "doninbuilding_low"} Any Don In My Building
+            %input#dononfloor_danger_low{:type => "radio", :value => "3"}/
+            %label{:for => "dononfloor_danger_low"} Dons Marked as Dangerous On My Floor
+            %input#doninbuilding_danger_low{:type => "radio", :value => "4"}/
+            %label{:for => "doninbuilding_danger_low"} Dons Marked as Dangerous In My Building
+        %div{"data-role" => "collapsible"}
+          %h3 Sound
+          %fieldset{"data-corners" => "false", "data-role" => "controlgroup"}
+            %select#soundtoplay
+              %option{:value => "INSERT_VALUE_HERE"} Sound not yet implemented
+            %input#soundforhighdanger{:checked => "checked", :type => "checkbox"}/
+            %label{:for => "soundforhighdanger"} Play Sound on High Alert
+            %input#soundforlowdanger{:type => "checkbox"}/
+            %label{:for => "soundforlowdanger"} Play Sound on Low Danger
+      %hr
+        %a{"data-role" => "button", :href => "#"} About
+        %a{"data-role" => "button", :href => "#"} Feedback
