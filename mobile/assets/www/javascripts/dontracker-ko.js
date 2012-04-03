@@ -13,19 +13,24 @@ $(function(){
   function SightingsViewModel(){
     var self = this;
 
+    // Get stored sightings
     var stored_sightings = window.localStorage.getItem("sightings");
-    if (stored_sightings) { // check if null
-      stored_sightings = JSON.parse(stored_sightings);
-    } else {
-      stored_sightings = [];
-    }
-
+    stored_sightings = stored_sightings ? JSON.parse(stored_sightings) : [];
     self.sightings = ko.observableArray(stored_sightings);
 
-    self.getSightings = function(){
-      var last_updated_at = window.localStorage.getItem('last_updated_at');
+    // Get last updated at info
+    self.last_updated_at = ko.observable(window.localStorage.getItem("last_updated_at"));
+    self.last_updated_at_relative = ko.computed(function() {
+      if (self.last_updated_at()) {
+        return jQuery.timeago(self.last_updated_at());
+      } else {
+        return "never";
+      }
+    }, self);
 
-      $.getJSON(serveraddress + "/sigtings", { since: last_updated_at }, function(data) {
+    self.getSightings = function(){
+
+      $.getJSON(serveraddress + "/sightings", { since: self.last_updated_at }, function(data) {
 
         // Insert new sightings
         data.forEach(function(sighting){
@@ -45,12 +50,19 @@ $(function(){
         json_sightings = ko.toJSON(self.sightings);
         window.localStorage.setItem("sightings", json_sightings);
 
-        // Record last fetch time
+        // Record last fetch time in LocalStorage and ModelView
         current_time = (new Date()).toJSON();
         window.localStorage.setItem("last_updated_at", current_time);
+        self.last_updated_at(current_time);
       });
     }
   };
 
   ko.applyBindings(new SightingsViewModel());
+
+  function LocationSelectViewModel(){
+    var self = this;
+
+    self.residences = ko.observableArray(['V1', 'MKV', 'REV']);
+  };
 });

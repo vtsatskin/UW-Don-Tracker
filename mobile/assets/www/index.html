@@ -11,7 +11,7 @@
     <script src='lib/knockout-2.0.0.js' type='text/javascript'></script>
     <script src='lib/jquery.timeago.js' type='text/javascript'></script>
     <script src='javascripts/helper.js' type='text/javascript'></script>
-    <!-- %script{:src => "javascripts/dontracker.js", :type => "text/javascript"} -->
+    <script src='javascripts/dontracker.js' type='text/javascript'></script>
     <script src='javascripts/dontracker-ko.js' type='text/javascript'></script>
   </head>
   <body>
@@ -41,6 +41,10 @@
       </div>
       <!-- / Sightings -->
       <div data-role='content'>
+        <div id='lastupdated'>
+          Last updated:
+          <strong data-bind='text: last_updated_at_relative'></strong>
+        </div>
         <ul class='ui-listview ui-listview-inset ui-corner-all ui-shadow' data-bind='foreach: sightings' data-role='listview' id='sightingslist'>
           <li class='ui-li ui-li-static ui-body-c ui-corner-top'>
             <p class='ui-li-aside ui-li-desc'>

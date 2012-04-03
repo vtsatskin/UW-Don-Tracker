@@ -13,7 +13,7 @@
     %script{:src => "lib/knockout-2.0.0.js", :type => "text/javascript"}
     %script{:src => "lib/jquery.timeago.js", :type => "text/javascript"}
     %script{:src => "javascripts/helper.js", :type => "text/javascript"}
-    / %script{:src => "javascripts/dontracker.js", :type => "text/javascript"}
+    %script{:src => "javascripts/dontracker.js", :type => "text/javascript"}
     %script{:src => "javascripts/dontracker-ko.js", :type => "text/javascript"}
   %body
     #main{"data-role" => "page"}
@@ -35,10 +35,13 @@
 
       // Sightings
       %div{"data-role" => "content"}
+        #lastupdated
+          Last updated: 
+          %strong{ "data-bind" => "text: last_updated_at_relative" }
         %ul#sightingslist.ui-listview.ui-listview-inset.ui-corner-all.ui-shadow{"data-role" => "listview", "data-bind" => "foreach: sightings"}
           %li.ui-li.ui-li-static.ui-body-c.ui-corner-top
             %p.ui-li-aside.ui-li-desc
-              %strong{ "data-bind" => "text: relativeTime"}
+              %strong{ "data-bind" => "text: relativeTime" }
             %h3.ui-li-heading{ "data-bind" => "text: danger_level"}
             %p.ui-li-desc
               %strong Residence: 
@@ -56,7 +59,7 @@
         %h1 Change Location
       #locchooser{"data-role" => "fieldcontain"}
         %label.select{:for => "residence"} Residence:
-        %select#residence{"data-corners" => "false"}
+        %select#residence{"data-corners" => "false", }
           %option{:disabled => "disabled", :value => "default"} Choose
           %option{:value => "MKV"} MKV
           %option{:value => "REV"} REV
