@@ -13,6 +13,7 @@ enable :static
 set :static_cache_control, [:public, :max_age => 300]
 
 post '/sighting' do
+  content_type :json
   sighting = Sighting.create params
 
   if sighting.valid?
@@ -24,6 +25,7 @@ post '/sighting' do
 end
 
 get '/sightings' do
+  content_type :json
   search_query = params.select { |k,v| User::API_SEARCHABLE_ATTRS.include? k }
 
   # Set limit if not specified
@@ -54,6 +56,7 @@ end
 
 # Creates and returns a new User (JSON)
 post '/user' do
+  content_type :json
   User.create({
     :ip_addresses => [request.ip],
     :user_agent   => request.user_agent,
@@ -63,6 +66,7 @@ end
 # Gets a User from specified Token (JSON)
 # Attributes displayed are whitelisted
 get '/user/:token' do
+  content_type :json
   if user = User.find_by_token(params[:token])
     user.to_public_json
   else

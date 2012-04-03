@@ -94,26 +94,25 @@ $(function(){
 		var residence = $('#residence_s').val();
 		var building = null;
 		var floor = null;
-		if (residence == "V1")
-			{
+    var area = $('#area').val();
+    if (residence == "V1") {
 				building = $('#buildingv1_s').val();
 				floor = $('#floorv1_s').val();
-			}
-		else if (residence == "MKV")			
+		} else if (residence == "MKV") {			
 				floor = $('#floormkv_s').val();
-		else if (residence == "REV")
-			{
-				floor $('#floorrev_s').val();
-			}
-			
-		debugger;
-		$.post(serveraddress + "/sighting", {residence: "V1", area: "S"/*$('#area_s').val()*/ , building: "4", floor: 5,}, 'json')
-		.success(function(){
-			alert("worked bro");					
-		})
-		.error(function(err){
-			alert(err);
-		});
+    } else if (residence == "REV") {
+				floor = $('#floorrev_s').val();
+		}
+    debugger;
+		$.post(serveraddress + "/sighting", { residence: residence, area: area , building: building, floor: floor,}, 'json')
+  		.success(function(data){
+        alert('worked');
+  			console.log(data);					
+  		})
+  		.error(function(data){
+  			console.log(data.dataResponse);
+  		});
+    debugger;
 	});
 });
 

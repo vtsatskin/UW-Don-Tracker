@@ -3,7 +3,7 @@
 //							Helper Functions:						  //
 //																	  //
 ////////////////////////////////////////////////////////////////////////
-var serveraddress = "INSERT_SERVER_ADDRESS"; //CHANGE
+var serveraddress = "http://10.0.0.78:4567"; //CHANGE
 function updateuserloc()
 {
 	var userloc = "Unknown";
