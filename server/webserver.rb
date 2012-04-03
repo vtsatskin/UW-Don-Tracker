@@ -75,8 +75,7 @@ end
 # Updated User is returned (JSON)
 post '/user/:token/update' do
   if user = User.find_by_token(params[:token])
-    filtered_params = params.select { |key, value| User::API_UPDATABLE_ATTRS.include? key.to_sym }
-    user.update_attributes filtered_params unless filtered_params.empty? 
+    user.update_attributes_from_public params
     user.to_public_json
   else
     [500, "No user found"]
