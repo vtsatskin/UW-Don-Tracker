@@ -91,10 +91,10 @@ $(function(){
 	});
 	$('#submit').click(function(){
 		/*$.post('10.0.0.7/sighting', { quad: , floor: , build: , residence: ,});*/
-		var residence = $('residence_s').val();
+		var residence = $('#residence_s').val();
 		var building = null;
 		var floor = null;
-		/*if (residence == "V1")
+		if (residence == "V1")
 			{
 				building = $('#buildingv1_s').val();
 				floor = $('#floorv1_s').val();
@@ -104,7 +104,7 @@ $(function(){
 		else if (residence == "REV")
 			{
 				floor $('#floorrev_s').val();
-			}*/
+			}
 			
 		debugger;
 		$.post(serveraddress + "/sighting", {residence: "V1", area: "S"/*$('#area_s').val()*/ , building: "4", floor: 5,}, 'json')
