@@ -1,6 +1,8 @@
 class Sighting
   include MongoMapper::Document
 
+  SANITIZED_KEYS = [ :residence, :area, :floor, :building, :danger_level ]
+
   # Reporter info
   key :ip_address, String
   key :session_id, String
@@ -17,9 +19,17 @@ class Sighting
   timestamps!
   attr_accessible :residence, :area, :floor, :building, :danger_level
 
-  before_save :format_data
+  before_save :format_data, :sanitize
 
   def format_data
     self.residence.upcase!
+  end
+
+  def sanitize
+    SANITIZED_KEYS.each do |key|
+      data = self.send(key)
+      doc = Loofah.fragment(data)
+      self.send(key.to_s+'=', doc.text)
+    end
   end
 end

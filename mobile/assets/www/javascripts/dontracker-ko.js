@@ -1,16 +1,18 @@
-$(function(){
+$(document).bind("mobileinit", function(){
+  $.mobile.ajaxEnabled = false;
+  $.mobile.allowCrossDomainPages = true;
+  $.support.cors = true;
+  $.mobile.fixedToolbars.show(true);
+  // $.mobile.defaultPageTransition = 'none';
+});
 
-  $(document).bind("mobileinit", function(){
-    $.mobile.ajaxEnabled = false;
-    $.mobile.allowCrossDomainPages = true ;
-  });
+$(function(){
 
   function Sighting(options) {
     for (index in options) {
       this[index] = options[index];
     };
 
-    this.relativeTime = jQuery.timeago(this.created_at);
     this.locationString = location_string(
       this.residence,
       this.area,
@@ -54,7 +56,7 @@ $(function(){
     // Queries server for sightings, saves and displays them
     self.getSightings = function(){
 
-      $.getJSON(serveraddress + "/sightings", { since: self.last_updated_at }, function(data) {
+      $.getJSON(serveraddress + "/sightings", { since: self.last_updated_at, limit: 50 }, function(data) {
 
         // Insert new sightings
         data.forEach(function(sighting){
@@ -83,18 +85,36 @@ $(function(){
 
     //////
     // POSTs a sighting to the server, updates UI
-    self.postSighting = function(formElement){
-      var serialized = $(formElement).serializeArray();
-      var params = {};
+    self.postSighting = function(params){
+      $.mobile.showPageLoadingMsg("b", "Posting...", true);
 
-      serialized.forEach(function(obj){
-        params[obj.name] = obj.value;
-      });
+      // Old code for parasing a DOM form
+      // var serialized = $(formElement).serializeArray();
+      // var params = {};
+      // 
+      // serialized.forEach(function(obj){
+      //   params[obj.name] = obj.value;
+      // });
+
+      if(typeof(params) == "undefined" || params instanceof HTMLElement) {
+        params = {
+          residence:    self.selected_residence(),
+          area:         self.selected_area(),
+          building:     self.selected_building(),
+          floor:        self.selected_floor(),
+          danger_level: self.selected_danger_level(),
+        };
+      }
 
       $.post(serveraddress + "/sighting", params, function(data){
         self.getSightings();
         $.mobile.changePage('index.html');
-      },'json');
+        $.mobile.hidePageLoadingMsg();
+      },'json')
+        .error(function(data){
+          alert("There was an error adding your sighting: " + data.responseText)
+          $.mobile.hidePageLoadingMsg();
+        });
 
     };
 
@@ -108,7 +128,8 @@ $(function(){
     // LOCATIONS
     ////
 
-    self.residences = ko.observableArray(["V1", "MKV", "REV"]);
+    self.residences = ko.observable(["V1", "MKV", "REV"]);
+    self.danger_levels = ko.observable(["High", "Medium", "Low"]);
 
     //////
     // Returns areas for specified residence
@@ -191,6 +212,7 @@ $(function(){
     self.selected_building = ko.observable();
     self.selected_area = ko.observable();
     self.selected_floor = ko.observable();
+    self.selected_danger_level = ko.observable();
 
     self.selected_areas = ko.dependentObservable(function(){
       return self.areas_map(self.selected_residence());
@@ -231,6 +253,27 @@ $(function(){
       );
     });
 
+    //////
+    // Sets selected location values to those of current location
+    self.useCurrentLocation = function(){
+      self.selected_residence(self.current_residence());
+      self.selected_building(self.current_building());
+      self.selected_area(self.current_area());
+      self.selected_floor(self.current_floor());
+    };
+
+    //////
+    // Uses current location for posting
+    self.postCurrentLocationSighting = function(){
+      self.postSighting({
+          residence:    self.current_residence(),
+          area:         self.current_area(),
+          building:     self.current_building(),
+          floor:        self.current_floor(),
+          danger_level: self.selected_danger_level(),
+      });
+    };
+
     ////
     // Utilities
     ////
@@ -243,7 +286,7 @@ $(function(){
     ////
     // Observables Extenders
     ////
-    
+
     ko.extenders.save_device_setting_to_server = function(target, option){
       target.subscribe(function(newValue){
         console.log('Should save to server:' + option + '=' + newValue);
@@ -251,6 +294,28 @@ $(function(){
       });
       return target;
     }
+
+    //////
+    // Parses given ISO-8601 timestamp to a relative time
+    // Inserts this time into the DOM element
+    // Relative time is auto-updating
+    ko.bindingHandlers.timeago = {
+      update: function(element, valueAccessor, allBindingsAccessor, viewModel) {
+        // This will be called once when the binding is first applied to an element,
+        // and again whenever the associated observable changes value.
+        // Update the DOM element based on the supplied values here.
+        var ele = $(element);
+        var timestamp = ko.utils.unwrapObservable(valueAccessor());
+
+        if (timestamp) {
+          ele.attr("title", timestamp);
+          ele.timeago();
+          ele.text(jQuery.timeago(timestamp));
+        } else {
+          ele.text("never");
+        }
+      }
+    };
   };
 
   ko.applyBindings(new AppViewModel());

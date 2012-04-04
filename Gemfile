@@ -5,6 +5,7 @@ gem 'thin'
 gem 'mongo_mapper'
 gem 'haml'
 gem 'sass'
+gem 'loofah'
 
 # gem 'rspec'
 # gem 'rack-test'

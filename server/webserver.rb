@@ -6,12 +6,18 @@ require 'haml'
 require 'json'
 require './config/mongodb.rb'
 
+disable :protection
 set :server, :thin
 set :haml, :format => :html5, :layout => :default
 enable :reload_templates if APP_ENV == 'development'
 enable :static
 set :static_cache_control, [:public, :max_age => 300]
 set :public_folder, File.join(File.dirname(__FILE__), '..', 'mobile/assets/www')
+
+# jQuery mobile insists on making forms AJAX
+post '/index.html' do
+  "Stupid jQuery..."
+end
 
 post '/sighting' do
   content_type :json

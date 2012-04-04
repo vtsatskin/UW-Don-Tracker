@@ -1,5 +1,6 @@
 APP_ENV ||= 'development'
 require 'mongo_mapper'
+require 'loofah'
 
 case APP_ENV
   when 'development'

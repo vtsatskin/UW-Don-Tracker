@@ -6,49 +6,48 @@
     <link href='lib/jquery.mobile/jquery.mobile-1.0.1.css' rel='stylesheet' type='text/css' />
     <link href='stylesheets/tracker.css' rel='stylesheet' type='text/css' />
     <script src='lib/jquery.mobile/jquery-1.6.4.min' type='text/javascript'></script>
+    <!-- Include dontracker before jquery mobile due to event hooks -->
+    <script src='javascripts/dontracker-ko.js' type='text/javascript'></script>
     <script src='lib/jquery.mobile/jquery.mobile-1.0.1.js' type='text/javascript'></script>
     <script src='lib/phonegap-1.4.1.js' type='text/javascript'></script>
     <script src='lib/knockout-2.0.0.js' type='text/javascript'></script>
     <script src='lib/jquery.timeago.js' type='text/javascript'></script>
     <script src='javascripts/helper.js' type='text/javascript'></script>
     <!-- %script{:src => "javascripts/dontracker.js", :type => "text/javascript"} -->
-    <script src='javascripts/dontracker-ko.js' type='text/javascript'></script>
   </head>
   <body>
     <div data-role='page' id='main'>
-      <div data-position='fixed' data-role='header' style='text-align:left'>
-        <p style='margin-left:1em'>
+      <div data-position='fixed' data-role='header'>
+        <h1>
           Location:
           <span data-bind='text: current_location_text'></span>
-        </p>
-        <a class='ui-btn-right' data-corners='false' href='#changeloc' style='margin-top:.5em'>Change</a>
+        </h1>
+        <a class='ui-btn-right' data-corners='false' href='#changeloc'>Change</a>
         <div data-iconpos='bottom' data-role='navbar'>
           <ul>
             <li>
               <a data-icon='plus' href='#add'>Add</a>
             </li>
+            <!-- %li -->
+            <!-- %a{"data-icon" => "search", :href => "#filterpage", :disabled => "disabled"} Filter -->
             <li>
-              <a data-icon='search' href='#filterpage'>Filter</a>
+              <a data-bind='click: getSightings' data-icon='refresh' href='#refresh'>Refresh</a>
             </li>
-            <li>
-              <a data-bind='click: $root.getSightings' data-icon='refresh' href='#refresh'>Refresh</a>
-            </li>
-            <li>
-              <a data-icon='gear' href='#options'>Options</a>
-            </li>
+            <!-- %li -->
+            <!-- %a{"data-icon" => "gear", :href => "#options"} Options -->
           </ul>
         </div>
       </div>
       <!-- / Sightings -->
       <div data-role='content'>
         <div id='lastupdated'>
-          Last updated:
-          <strong data-bind='text: last_updated_at_relative'></strong>
+          last updated:
+          <strong class='test' data-bind='timeago: last_updated_at'></strong>
         </div>
         <ul class='ui-listview ui-listview-inset ui-corner-all ui-shadow' data-bind='foreach: sightings' data-role='listview' id='sightingslist'>
-          <li class='ui-li ui-li-static ui-body-c ui-corner-top'>
+          <li class='ui-li ui-li-static ui-body-c'>
             <p class='ui-li-aside ui-li-desc'>
-              <strong data-bind='text: relativeTime'></strong>
+              <strong class='timeago' data-bind='timeago: created_at'></strong>
             </p>
             <h3 class='ui-li-heading' data-bind='text: locationString'></h3>
             <p class='ui-li-desc' data-bind='text: danger_level'></p>
@@ -58,9 +57,12 @@
       </div>
     </div>
     <div data-role='page' id='add'>
-      <div data-role='header'>
+      <div data-position='fixed' data-role='header'>
         <a data-corners='false' data-rel='back'>Back</a>
-        <h1>Add Sighting</h1>
+        <h1>
+          Location:
+          <span data-bind='text: current_location_text'></span>
+        </h1>
       </div>
       <form data-bind='submit: postSighting' data-role='fieldcontain' method='post'>
         <label class='select' for='selected_residence'>Residence</label>
@@ -78,19 +80,27 @@
           <option data-bind='attr: { value: id }, text: name'></option>
         </select>
         <label class='select' for='dangerlevel'>Danger Level</label>
-        <select data-corners='false' id='dangerlevel' name='danger_level'>
-          <option disabled='disabled' value='default'>Choose</option>
-          <option value='H'>High</option>
-          <option value='M'>Medium</option>
-          <option value='L'>Low</option>
-        </select>
-        <button class='ui-btn-hidden' data-theme='b' type='Submit' value='Add Sighting'></button>
+        <select data-bind='options: danger_levels, value: selected_danger_level' data-corners='false' id='dangerlevel' name='danger_level'></select>
+        <fieldset class='ui-grid-a'>
+          <div class='ui-block-a'>
+            <button data-icon='add' data-theme='b' type='Submit' value='Add Sighting'></button>
+          </div>
+          <div class='ui-block-b'>
+            <button data-bind='click: postCurrentLocationSighting' data-icon='home' data-theme='a' value='Use Current Location'></button>
+          </div>
+        </fieldset>
+        <p class='center'>
+          Using current location will report your selected danger level
+        </p>
       </form>
     </div>
     <div data-role='page' id='changeloc'>
-      <div data-role='header'>
+      <div data-position='fixed' data-role='header'>
         <a data-corners='false' data-rel='back'>Save</a>
-        <h1>Change Location</h1>
+        <h1>
+          Location:
+          <span data-bind='text: current_location_text'></span>
+        </h1>
       </div>
       <div data-role='fieldcontain'>
         <label class='select' for='current_residence'>Residence</label>
@@ -106,13 +116,6 @@
         <label class='select' for='current_floor'>Floor</label>
         <select data-bind='foreach: current_floors, value: current_floor' data-corners='false' id='current_floor'>
           <option data-bind='attr: { value: id }, text: name'></option>
-        </select>
-        <label class='select' for='dangerlevel'>Danger Level</label>
-        <select data-corners='false' id='dangerlevel'>
-          <option disabled='disabled' value='default'>Choose</option>
-          <option value='H'>High</option>
-          <option value='M'>Medium</option>
-          <option value='L'>Low</option>
         </select>
       </div>
     </div>
