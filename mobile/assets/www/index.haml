@@ -13,169 +13,98 @@
     %script{:src => "lib/knockout-2.0.0.js", :type => "text/javascript"}
     %script{:src => "lib/jquery.timeago.js", :type => "text/javascript"}
     %script{:src => "javascripts/helper.js", :type => "text/javascript"}
-    %script{:src => "javascripts/dontracker.js", :type => "text/javascript"}
+    / %script{:src => "javascripts/dontracker.js", :type => "text/javascript"}
     %script{:src => "javascripts/dontracker-ko.js", :type => "text/javascript"}
   %body
     #main{"data-role" => "page"}
       %div{"data-position" => "fixed", "data-role" => "header", :style => "text-align:left"}
         %p{:style => "margin-left:1em"}
           Location:
-          %span#currentloc ?
+          %span{"data-bind" => "text: current_location_text"}
         %a.ui-btn-right{"data-corners" => "false", :href => "#changeloc", :style => "margin-top:.5em"} Change
         %div{"data-iconpos" => "bottom", "data-role" => "navbar"}
           %ul
             %li
-              %a{"data-icon" => "plus", :href => "#addsighting"} Add
-              %li
-                %a{"data-icon" => "search", :href => "#filterpage"} Filter
-              %li
-                %a{"data-icon" => "refresh", "data-bind" => "click: $root.getSightings", :href => "#refresh"} Refresh
-              %li
-                %a{"data-icon" => "gear", :href => "#options"} Options
+              %a{"data-icon" => "plus", :href => "#add"} Add
+            %li
+              %a{"data-icon" => "search", :href => "#filterpage"} Filter
+            %li
+              %a{"data-icon" => "refresh", "data-bind" => "click: $root.getSightings", :href => "#refresh"} Refresh
+            %li
+              %a{"data-icon" => "gear", :href => "#options"} Options
 
       // Sightings
       %div{"data-role" => "content"}
         #lastupdated
           Last updated: 
           %strong{ "data-bind" => "text: last_updated_at_relative" }
+
         %ul#sightingslist.ui-listview.ui-listview-inset.ui-corner-all.ui-shadow{"data-role" => "listview", "data-bind" => "foreach: sightings"}
           %li.ui-li.ui-li-static.ui-body-c.ui-corner-top
             %p.ui-li-aside.ui-li-desc
               %strong{ "data-bind" => "text: relativeTime" }
-            %h3.ui-li-heading{ "data-bind" => "text: danger_level"}
-            %p.ui-li-desc
-              %strong Residence: 
-              %span{ "data-bind" => "text: residence"}
-              %strong Building:
-              %span{ "data-bind" => "text: building"}
-              %strong Area:
-              %span{ "data-bind" => "text: area"}
-              %strong Floor:
-              %span{ "data-bind" => "text: floor"}
+            %h3.ui-li-heading{ "data-bind" => "text: locationString"}
+            %p.ui-li-desc{ "data-bind" => "text: danger_level"}
         %button{:'data-role' => "button", :'data-icon' => "delete", :'data-bind' => "click: clearStorage"} Clear Local Storage
 
-    #changeloc{"data-role" => "page"}
-      %div{"data-role" => "header"}
-        %a{"data-corners" => "false", "data-rel" => "back"} Back
-        %h1 Change Location
-      #locchooser{"data-role" => "fieldcontain"}
-        %label.select{:for => "residence"} Residence:
-        %select#residence{"data-corners" => "false", }
-          %option{:disabled => "disabled", :value => "default"} Choose
-          %option{:value => "MKV"} MKV
-          %option{:value => "REV"} REV
-          %option{:value => "V1"} V1
-          / More rezzes coming soon!
-        %label.select{:for => "area"} Quad:
-        %select#area{"data-corners" => "false"}
-          %option{:disabled => "disabled", :value => "default"} Choose
-          %option{:value => "N"} North
-          %option{:value => "S"} South
-          %option{:value => "E"} East
-          %option{:value => "W"} West
-        #buildingselectorv1{:style => "display:none"}
-          %label.select{:for => "buildingv1"} Building
-          %select#buildingv1{"data-corners" => "false"}
-            %option{:disabled => "disabled", :value => "default"} Choose
-            %option{:value => "1"} 1
-            %option{:value => "2"} 2
-            %option{:value => "3"} 3
-            %option{:value => "4"} 4
-            %option{:value => "5"} 5
-            %option{:value => "6"} 6
-            %option{:value => "7"} 7
-            %option{:value => "8"} 8
-        #floorselectorv1
-          %label.select{:for => "floorv1"} Floor
-          %select#floorv1{"data-corners" => "false"}
-            %option{:disabled => "disabled", :value => "default"} Choose
-            %option{:value => "0"} Basement
-            %option{:value => "1"} 1
-            %option{:value => "2"} 2
-            %option{:value => "3"} 3
-        #floorselectormkv{:style => "display:none"}
-          %label.select{:for => "floormkv"} Floor
-          %select#floormkv{"data-corners" => "false"}
-            %option{:disabled => "disabled", :value => "default"} Choose
-            %option{:value => "1"} 1
-            %option{:value => "2"} 2
-            %option{:value => "3"} 3
-            %option{:value => "4"} 4
-        #floorselectorrev{:style => "display:none"}
-          %label.select{:for => "floorrev"} Floor
-          %select#floorrev{"data-corners" => "false"}
-            %option{:disabled => "disabled", :value => "default"} Choose
-            %option{:value => "1"} 1
-            %option{:value => "2"} 2
-            %option{:value => "3"} 3
-            %option{:value => "4"} 4
-            %option{:value => "5"} 5
-        #savediv{:style => "display:none"}
-          %button#save{"data-inline" => "true", "data-theme" => "b"} Save
-    #addsighting{"data-role" => "page"}
+    #add{"data-role" => "page"}
       %div{"data-role" => "header"}
         %a{"data-corners" => "false", "data-rel" => "back"} Back
         %h1 Add Sighting
-      #sightingadder{"data-role" => "fieldcontain"}
-        %label.select{:for => "residence_s"} Residence:
-        %select#residence_s{"data-corners" => "false"}
+
+      %form{"data-role" => "fieldcontain", "data-bind" => "submit: postSighting", :method => 'post' }
+        %label.select{:for => "selected_residence" } Residence
+        %select#selected_residence{ :name => 'residence', "data-corners" => "false", "data-bind" => "options: residences, value: selected_residence" }
+
+        %label.select{ :for => "selected_area" } Area
+        %select#selected_area{ :name => 'area', "data-corners" => "false", "data-bind" => "foreach: selected_areas, value: selected_area" }
+          %option{ "data-bind" => "attr: { value: id }, text: name" }
+
+        %label.select{:for => "selected_building" } Building
+        %select#selected_building{ :name => 'building', "data-corners" => "false", "data-bind" => "foreach: selected_buildings, value: selected_building" }
+          %option{ "data-bind" => "attr: { value: id }, text: name" }
+
+        %label.select{:for => "selected_floor" } Floor
+        %select#selected_floor{ :name => 'floor', "data-corners" => "false", "data-bind" => "foreach: selected_floors, value: selected_floor" }
+          %option{ "data-bind" => "attr: { value: id }, text: name" }
+
+        %label.select{:for => "dangerlevel"} Danger Level
+        %select#dangerlevel{ :name => 'danger_level', "data-corners" => "false"}
           %option{:disabled => "disabled", :value => "default"} Choose
-          %option{:value => "MKV"} MKV
-          %option{:value => "REV"} REV
-          %option{:value => "V1"} V1
-          / More rezzes coming soon!
-        %label.select{:for => "area_s"} Quad:
-        %select#area_s{"data-corners" => "false"}
-          %option{:disabled => "disabled", :value => "default"} Choose
-          %option{:value => "N"} North
-          %option{:value => "S"} South
-          %option{:value => "E"} East
-          %option{:value => "W"} West
-        #buildingselectorv1_s{:style => "display:none"}
-          %label.select{:for => "buildingv1_s"} Building
-          %select#buildingv1_s{"data-corners" => "false"}
-            %option{:disabled => "disabled", :value => "default"} Choose
-            %option{:value => "1"} 1
-            %option{:value => "2"} 2
-            %option{:value => "3"} 3
-            %option{:value => "4"} 4
-            %option{:value => "5"} 5
-            %option{:value => "6"} 6
-            %option{:value => "7"} 7
-            %option{:value => "8"} 8
-        #floorselectorv1_s
-          %label.select{:for => "floorv1_s"} Floor
-          %select#floorv1_s{"data-corners" => "false"}
-            %option{:disabled => "disabled", :value => "default"} Choose
-            %option{:value => "0"} Basement
-            %option{:value => "1"} 1
-            %option{:value => "2"} 2
-            %option{:value => "3"} 3
-        #floorselectormkv_s{:style => "display:none"}
-          %label.select{:for => "floormkv_s"} Floor
-          %select#floormkv_s{"data-corners" => "false"}
-            %option{:disabled => "disabled", :value => "default"} Choose
-            %option{:value => "1"} 1
-            %option{:value => "2"} 2
-            %option{:value => "3"} 3
-            %option{:value => "4"} 4
-        #floorselectorrev_s{:style => "display:none"}
-          %label.select{:for => "floorrev_s"} Floor
-          %select#floorrev_s{"data-corners" => "false"}
-            %option{:disabled => "disabled", :value => "default"} Choose
-            %option{:value => "1"} 1
-            %option{:value => "2"} 2
-            %option{:value => "3"} 3
-            %option{:value => "4"} 4
-            %option{:value => "5"} 5
+          %option{:value => "H"} High
+          %option{:value => "M"} Medium
+          %option{:value => "L"} Low
+
+        %button.ui-btn-hidden{:type => "Submit", :value => "Add Sighting", "data-theme" => "b"}
+
+    #changeloc{"data-role" => "page"}
+      %div{"data-role" => "header"}
+        %a{"data-corners" => "false", "data-rel" => "back"} Save
+        %h1 Change Location
+
+      %div{"data-role" => "fieldcontain"}
+        %label.select{:for => "current_residence" } Residence
+        %select#current_residence{"data-corners" => "false", "data-bind" => "options: residences, value: current_residence" }
+
+        %label.select{ :for => "current_area" } Area
+        %select#current_area{"data-corners" => "false", "data-bind" => "foreach: current_areas, value: current_area" }
+          %option{ "data-bind" => "attr: { value: id }, text: name" }
+
+        %label.select{:for => "current_building" } Building
+        %select#current_building{"data-corners" => "false", "data-bind" => "foreach: current_buildings, value: current_building" }
+          %option{ "data-bind" => "attr: { value: id }, text: name" }
+
+        %label.select{:for => "current_floor" } Floor
+        %select#current_floor{"data-corners" => "false", "data-bind" => "foreach: current_floors, value: current_floor" }
+          %option{ "data-bind" => "attr: { value: id }, text: name" }
+
         %label.select{:for => "dangerlevel"} Danger Level
         %select#dangerlevel{"data-corners" => "false"}
           %option{:disabled => "disabled", :value => "default"} Choose
           %option{:value => "H"} High
           %option{:value => "M"} Medium
           %option{:value => "L"} Low
-        #submitdiv{:style => "display:none"}
-          %button#submit{"data-inline" => "true", "data-theme" => "b"} Submit
+
     #filterpage{"data-role" => "page"}
       %div{"data-role" => "header"}
         %a{"data-corners" => "false", "data-rel" => "back"} Back

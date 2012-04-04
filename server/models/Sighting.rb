@@ -7,8 +7,8 @@ class Sighting
 
   # Location Info
   key :residence, String,  :required => true
-  key :area,      String,  :required => true
-  key :floor,     Integer, :numeric  => true
+  key :area,      String
+  key :floor,     String,  :required => true
   key :building,  String,  :required => true
 
   # Report info

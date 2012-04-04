@@ -11,7 +11,7 @@
     <script src='lib/knockout-2.0.0.js' type='text/javascript'></script>
     <script src='lib/jquery.timeago.js' type='text/javascript'></script>
     <script src='javascripts/helper.js' type='text/javascript'></script>
-    <script src='javascripts/dontracker.js' type='text/javascript'></script>
+    <!-- %script{:src => "javascripts/dontracker.js", :type => "text/javascript"} -->
     <script src='javascripts/dontracker-ko.js' type='text/javascript'></script>
   </head>
   <body>
@@ -19,22 +19,22 @@
       <div data-position='fixed' data-role='header' style='text-align:left'>
         <p style='margin-left:1em'>
           Location:
-          <span id='currentloc'>?</span>
+          <span data-bind='text: current_location_text'></span>
         </p>
         <a class='ui-btn-right' data-corners='false' href='#changeloc' style='margin-top:.5em'>Change</a>
         <div data-iconpos='bottom' data-role='navbar'>
           <ul>
             <li>
-              <a data-icon='plus' href='#addsighting'>Add</a>
-              <li>
-                <a data-icon='search' href='#filterpage'>Filter</a>
-              </li>
-              <li>
-                <a data-bind='click: $root.getSightings' data-icon='refresh' href='#refresh'>Refresh</a>
-              </li>
-              <li>
-                <a data-icon='gear' href='#options'>Options</a>
-              </li>
+              <a data-icon='plus' href='#add'>Add</a>
+            </li>
+            <li>
+              <a data-icon='search' href='#filterpage'>Filter</a>
+            </li>
+            <li>
+              <a data-bind='click: $root.getSightings' data-icon='refresh' href='#refresh'>Refresh</a>
+            </li>
+            <li>
+              <a data-icon='gear' href='#options'>Options</a>
             </li>
           </ul>
         </div>
@@ -50,161 +50,63 @@
             <p class='ui-li-aside ui-li-desc'>
               <strong data-bind='text: relativeTime'></strong>
             </p>
-            <h3 class='ui-li-heading' data-bind='text: danger_level'></h3>
-            <p class='ui-li-desc'>
-              <strong>Residence:</strong>
-              <span data-bind='text: residence'></span>
-              <strong>Building:</strong>
-              <span data-bind='text: building'></span>
-              <strong>Area:</strong>
-              <span data-bind='text: area'></span>
-              <strong>Floor:</strong>
-              <span data-bind='text: floor'></span>
-            </p>
+            <h3 class='ui-li-heading' data-bind='text: locationString'></h3>
+            <p class='ui-li-desc' data-bind='text: danger_level'></p>
           </li>
         </ul>
         <button data-bind='click: clearStorage' data-icon='delete' data-role='button'>Clear Local Storage</button>
       </div>
     </div>
-    <div data-role='page' id='changeloc'>
-      <div data-role='header'>
-        <a data-corners='false' data-rel='back'>Back</a>
-        <h1>Change Location</h1>
-      </div>
-      <div data-role='fieldcontain' id='locchooser'>
-        <label class='select' for='residence'>Residence:</label>
-        <select data-corners='false' id='residence'>
-          <option disabled='disabled' value='default'>Choose</option>
-          <option value='MKV'>MKV</option>
-          <option value='REV'>REV</option>
-          <option value='V1'>V1</option>
-          <!-- More rezzes coming soon! -->
-        </select>
-        <label class='select' for='area'>Quad:</label>
-        <select data-corners='false' id='area'>
-          <option disabled='disabled' value='default'>Choose</option>
-          <option value='N'>North</option>
-          <option value='S'>South</option>
-          <option value='E'>East</option>
-          <option value='W'>West</option>
-        </select>
-        <div id='buildingselectorv1' style='display:none'>
-          <label class='select' for='buildingv1'>Building</label>
-          <select data-corners='false' id='buildingv1'>
-            <option disabled='disabled' value='default'>Choose</option>
-            <option value='1'>1</option>
-            <option value='2'>2</option>
-            <option value='3'>3</option>
-            <option value='4'>4</option>
-            <option value='5'>5</option>
-            <option value='6'>6</option>
-            <option value='7'>7</option>
-            <option value='8'>8</option>
-          </select>
-        </div>
-        <div id='floorselectorv1'>
-          <label class='select' for='floorv1'>Floor</label>
-          <select data-corners='false' id='floorv1'>
-            <option disabled='disabled' value='default'>Choose</option>
-            <option value='0'>Basement</option>
-            <option value='1'>1</option>
-            <option value='2'>2</option>
-            <option value='3'>3</option>
-          </select>
-        </div>
-        <div id='floorselectormkv' style='display:none'>
-          <label class='select' for='floormkv'>Floor</label>
-          <select data-corners='false' id='floormkv'>
-            <option disabled='disabled' value='default'>Choose</option>
-            <option value='1'>1</option>
-            <option value='2'>2</option>
-            <option value='3'>3</option>
-            <option value='4'>4</option>
-          </select>
-        </div>
-        <div id='floorselectorrev' style='display:none'>
-          <label class='select' for='floorrev'>Floor</label>
-          <select data-corners='false' id='floorrev'>
-            <option disabled='disabled' value='default'>Choose</option>
-            <option value='1'>1</option>
-            <option value='2'>2</option>
-            <option value='3'>3</option>
-            <option value='4'>4</option>
-            <option value='5'>5</option>
-          </select>
-        </div>
-        <div id='savediv' style='display:none'>
-          <button data-inline='true' data-theme='b' id='save'>Save</button>
-        </div>
-      </div>
-    </div>
-    <div data-role='page' id='addsighting'>
+    <div data-role='page' id='add'>
       <div data-role='header'>
         <a data-corners='false' data-rel='back'>Back</a>
         <h1>Add Sighting</h1>
       </div>
-      <div data-role='fieldcontain' id='sightingadder'>
-        <label class='select' for='residence_s'>Residence:</label>
-        <select data-corners='false' id='residence_s'>
-          <option disabled='disabled' value='default'>Choose</option>
-          <option value='MKV'>MKV</option>
-          <option value='REV'>REV</option>
-          <option value='V1'>V1</option>
-          <!-- More rezzes coming soon! -->
+      <form data-bind='submit: postSighting' data-role='fieldcontain' method='post'>
+        <label class='select' for='selected_residence'>Residence</label>
+        <select data-bind='options: residences, value: selected_residence' data-corners='false' id='selected_residence' name='residence'></select>
+        <label class='select' for='selected_area'>Area</label>
+        <select data-bind='foreach: selected_areas, value: selected_area' data-corners='false' id='selected_area' name='area'>
+          <option data-bind='attr: { value: id }, text: name'></option>
         </select>
-        <label class='select' for='area_s'>Quad:</label>
-        <select data-corners='false' id='area_s'>
-          <option disabled='disabled' value='default'>Choose</option>
-          <option value='N'>North</option>
-          <option value='S'>South</option>
-          <option value='E'>East</option>
-          <option value='W'>West</option>
+        <label class='select' for='selected_building'>Building</label>
+        <select data-bind='foreach: selected_buildings, value: selected_building' data-corners='false' id='selected_building' name='building'>
+          <option data-bind='attr: { value: id }, text: name'></option>
         </select>
-        <div id='buildingselectorv1_s' style='display:none'>
-          <label class='select' for='buildingv1_s'>Building</label>
-          <select data-corners='false' id='buildingv1_s'>
-            <option disabled='disabled' value='default'>Choose</option>
-            <option value='1'>1</option>
-            <option value='2'>2</option>
-            <option value='3'>3</option>
-            <option value='4'>4</option>
-            <option value='5'>5</option>
-            <option value='6'>6</option>
-            <option value='7'>7</option>
-            <option value='8'>8</option>
-          </select>
-        </div>
-        <div id='floorselectorv1_s'>
-          <label class='select' for='floorv1_s'>Floor</label>
-          <select data-corners='false' id='floorv1_s'>
-            <option disabled='disabled' value='default'>Choose</option>
-            <option value='0'>Basement</option>
-            <option value='1'>1</option>
-            <option value='2'>2</option>
-            <option value='3'>3</option>
-          </select>
-        </div>
-        <div id='floorselectormkv_s' style='display:none'>
-          <label class='select' for='floormkv_s'>Floor</label>
-          <select data-corners='false' id='floormkv_s'>
-            <option disabled='disabled' value='default'>Choose</option>
-            <option value='1'>1</option>
-            <option value='2'>2</option>
-            <option value='3'>3</option>
-            <option value='4'>4</option>
-          </select>
-        </div>
-        <div id='floorselectorrev_s' style='display:none'>
-          <label class='select' for='floorrev_s'>Floor</label>
-          <select data-corners='false' id='floorrev_s'>
-            <option disabled='disabled' value='default'>Choose</option>
-            <option value='1'>1</option>
-            <option value='2'>2</option>
-            <option value='3'>3</option>
-            <option value='4'>4</option>
-            <option value='5'>5</option>
-          </select>
-        </div>
+        <label class='select' for='selected_floor'>Floor</label>
+        <select data-bind='foreach: selected_floors, value: selected_floor' data-corners='false' id='selected_floor' name='floor'>
+          <option data-bind='attr: { value: id }, text: name'></option>
+        </select>
+        <label class='select' for='dangerlevel'>Danger Level</label>
+        <select data-corners='false' id='dangerlevel' name='danger_level'>
+          <option disabled='disabled' value='default'>Choose</option>
+          <option value='H'>High</option>
+          <option value='M'>Medium</option>
+          <option value='L'>Low</option>
+        </select>
+        <button class='ui-btn-hidden' data-theme='b' type='Submit' value='Add Sighting'></button>
+      </form>
+    </div>
+    <div data-role='page' id='changeloc'>
+      <div data-role='header'>
+        <a data-corners='false' data-rel='back'>Save</a>
+        <h1>Change Location</h1>
+      </div>
+      <div data-role='fieldcontain'>
+        <label class='select' for='current_residence'>Residence</label>
+        <select data-bind='options: residences, value: current_residence' data-corners='false' id='current_residence'></select>
+        <label class='select' for='current_area'>Area</label>
+        <select data-bind='foreach: current_areas, value: current_area' data-corners='false' id='current_area'>
+          <option data-bind='attr: { value: id }, text: name'></option>
+        </select>
+        <label class='select' for='current_building'>Building</label>
+        <select data-bind='foreach: current_buildings, value: current_building' data-corners='false' id='current_building'>
+          <option data-bind='attr: { value: id }, text: name'></option>
+        </select>
+        <label class='select' for='current_floor'>Floor</label>
+        <select data-bind='foreach: current_floors, value: current_floor' data-corners='false' id='current_floor'>
+          <option data-bind='attr: { value: id }, text: name'></option>
+        </select>
         <label class='select' for='dangerlevel'>Danger Level</label>
         <select data-corners='false' id='dangerlevel'>
           <option disabled='disabled' value='default'>Choose</option>
@@ -212,9 +114,6 @@
           <option value='M'>Medium</option>
           <option value='L'>Low</option>
         </select>
-        <div id='submitdiv' style='display:none'>
-          <button data-inline='true' data-theme='b' id='submit'>Submit</button>
-        </div>
       </div>
     </div>
     <div data-role='page' id='filterpage'>
