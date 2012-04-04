@@ -211,15 +211,15 @@ $(function(){
     self.current_floor = ko.observable();
 
     self.current_areas = ko.dependentObservable(function(){
-      return self.areas_map(self.selected_residence());
+      return self.areas_map(self.current_residence());
     });
 
     self.current_buildings = ko.dependentObservable(function(){
-      return self.buildings_map(self.selected_residence());
+      return self.buildings_map(self.current_residence());
     });
 
     self.current_floors = ko.dependentObservable(function(){
-      return self.floors_map(self.selected_residence());
+      return self.floors_map(self.current_residence());
     });
     
     self.current_location_text = ko.dependentObservable(function(){
