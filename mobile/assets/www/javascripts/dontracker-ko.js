@@ -92,15 +92,21 @@ $(function(){
     ////
     // Device Registration
     ////
-
-    if (device_token) {
-      // Ensure the device is registered properly
-      $.getJSON(serveraddress + "/device/" + device_token).error(function(){
-        window.localStorage.removeItem("device_token");
+    
+    // TODO: Have this work on desktop
+    // Wait until phonegap loaded to register device
+    document.addEventListener("deviceready", onDeviceReady, false);
+    
+    function onDeviceReady(){
+      if (device_token) {
+        // Ensure the device is registered properly
+        $.getJSON(serveraddress + "/device/" + device_token).error(function(){
+          window.localStorage.removeItem("device_token");
+          register_device();
+        });
+      } else {
         register_device();
-      });
-    } else {
-      register_device();
+      }
     }
 
     ////

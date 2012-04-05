@@ -104,8 +104,9 @@ post '/device/:token/update' do
 end
 
 get '/check_version/:version' do
+  # Upcoming: ALPHADEV2
   current_version = "ALPHADEV"
-  update_text = "A new version is avaliable <a href='#'>download here</a>"
+  update_text = "A new version is avaliable <a href='https://build.phonegap.com/apps/96858/share'>download here</a>"
 
   unless params[:version] == current_version
     { :latest => false, :message => update_text }.to_json
