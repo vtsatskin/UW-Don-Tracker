@@ -1,3 +1,10 @@
+var development = true;
+var serveraddress = development ? "http://10.0.0.78:4567" : "http://uwdt.vtsatskin.com:4567";
+var version = "ALPHADEV";
+var version_check_delay = 3600000; // 1 hour in milliseconds
+var version_last_checked = Date.parse(window.localStorage.getItem("version_last_checked"));
+var device_token = window.localStorage.getItem("device_token");
+
 $(document).bind("mobileinit", function(){
   $.mobile.ajaxEnabled = false;
   $.mobile.allowCrossDomainPages = true;
@@ -25,13 +32,97 @@ $(function(){
     var string = residence + " ";
     string += area;
     string += building;
-    string += " Floor ";
+    if (residence != "Renison") {
+      string += " Floor ";
+    }
     string += floor;
     return string;
   }
 
+  function register_device(){
+    if (window.device) {
+      var params = {
+        uuid: window.device.uuid,
+        phonegap: window.device.phonegap,
+        platform: window.device.platform,
+        name: window.device.name,
+        version: version,
+      };
+    } else {
+      var params = {
+        uuid: "NO-DEVICE-INFO",
+        version: version,
+      };
+    }
+    $.post(serveraddress + "/device", params, function(data){
+      window.localStorage.setItem("device_token", data.token);
+      device_token = data.token;
+    });
+  }
+
+  ////
+  // Observables Extenders
+  ////
+
+  //////
+  // Saves settings to localStorage and server
+  ko.extenders.save_setting = function(target, option){
+    target.subscribe(function(newValue){
+      // Save to server
+      if(device_token) {
+        console.log('Should save to server:' + option + '=' + newValue);
+        var params = {}
+        params[option] = newValue;
+        $.post(serveraddress + '/device/' + device_token + '/update', params, function(data){
+          console.log("Worked! " + data);
+        });
+      }
+
+      // Save to localStorage
+      window.localStorage.setItem(option, newValue);
+    });
+    return target;
+  }
+
   function AppViewModel(){
     var self = this;
+
+    self.development = development;
+
+    ////
+    // Device Registration
+    ////
+
+    if (device_token) {
+      // Ensure the device is registered properly
+      $.getJSON(serveraddress + "/device/" + device_token).error(function(){
+        window.localStorage.removeItem("device_token");
+        register_device();
+      });
+    } else {
+      register_device();
+    }
+
+    ////
+    // Updates
+    ////
+
+    self.show_update_text = ko.observable(false);
+
+    self.check_for_update = function(dont_throttle){
+      $.getJSON(serveraddress + "/check_version/" + version, function(data){
+        if(!data.latest) {
+          self.show_update_text(true);
+          $("#update_text").html(data.message); // Using jQuery due to ko's inability to render html
+        }
+      });
+    }
+
+    self.check_for_update();
+
+    $(document).everyTime(version_check_delay, function() {
+      self.check_for_update();
+    });
 
     ////
     // SIGHTINGS
@@ -83,6 +174,8 @@ $(function(){
       });
     };
 
+    self.getSightings();
+
     //////
     // POSTs a sighting to the server, updates UI
     self.postSighting = function(params){
@@ -106,6 +199,9 @@ $(function(){
         };
       }
 
+      // Insert device token into POST data
+      params["device_token"] = device_token;
+
       $.post(serveraddress + "/sighting", params, function(data){
         self.getSightings();
         $.mobile.changePage('index.html');
@@ -128,7 +224,7 @@ $(function(){
     // LOCATIONS
     ////
 
-    self.residences = ko.observable(["V1", "MKV", "REV"]);
+    self.residences = ko.observable(["V1", "MKV", "REV", "Renison"]);
     self.danger_levels = ko.observable(["High", "Medium", "Low"]);
 
     //////
@@ -146,6 +242,12 @@ $(function(){
           ]
           break;
         case "MKV":
+          _areas = [{ id: "", name: "None"}]; // Hack to get blank values
+          break;  
+        case "REV":
+          _areas = [{ id: "", name: "None"}]; // Hack to get blank values
+          break;
+        case "Renison":
           _areas = [{ id: "", name: "None"}]; // Hack to get blank values
           break;
       }
@@ -176,6 +278,18 @@ $(function(){
             { id: "E", name: "East" },
             { id: "W", name: "West" },
           ];
+          break;
+        case "REV":
+          _buildings = [
+            { id: "E", name: "East" },
+            { id: "W", name: "West" },
+            { id: "N", name: "North" },
+            { id: "S", name: "South" },
+          ];
+          break;
+        case "Renison":
+          _buildings = [{ id: "", name: "None"}]; // Hack to get blank values
+          break;
       }
 
       return _buildings;
@@ -202,6 +316,30 @@ $(function(){
             { id: "3", name: "3" },
             { id: "4", name: "4" },
           ];
+          break;
+        case "REV":
+          _floors = [
+            { id: "1", name: "1" },
+            { id: "2", name: "2" },
+            { id: "3", name: "3" },
+            { id: "4", name: "4" },
+            { id: "5", name: "5" },
+          ];
+          break;
+        case "Renison":
+          _floors = [
+            { id: "Fubar", name: "Fubar" },
+            { id: "Animal", name: "Animal" },
+            { id: "Loft", name: "Loft" },
+            { id: "Midway", name: "Midway" },
+            { id: "Oasis", name: "Oasis" },
+            { id: "Moose Crossing", name: "Moose Crossing" },
+            { id: "Euphoria", name: "Euphoria" },
+            { id: "Timbuktu", name: "Timbuktu" },
+            { id: "Treetop", name: "Treetop" },
+            { id: "Down Under", name: "Down Under" },
+          ];
+          break;
       }
 
       return _floors;
@@ -212,7 +350,7 @@ $(function(){
     self.selected_building = ko.observable();
     self.selected_area = ko.observable();
     self.selected_floor = ko.observable();
-    self.selected_danger_level = ko.observable();
+    self.selected_danger_level = ko.observable("Medium");
 
     self.selected_areas = ko.dependentObservable(function(){
       return self.areas_map(self.selected_residence());
@@ -226,11 +364,24 @@ $(function(){
       return self.floors_map(self.selected_residence());
     });
 
+    // Stored current location information retrieval
+    var stored_current_residence = window.localStorage.getItem("current_residence")
+    stored_current_residence = stored_current_residence ? stored_current_residence : "V1";
+
+    var stored_current_building = window.localStorage.getItem("current_building")
+    stored_current_building = stored_current_building ? stored_current_building : "";
+
+    var stored_current_area = window.localStorage.getItem("current_area")
+    stored_current_area = stored_current_area ? stored_current_area : "";
+
+    var stored_current_floor = window.localStorage.getItem("current_floor")
+    stored_current_floor = stored_current_floor ? stored_current_floor : "";
+    
     // Current location form data and settings
-    self.current_residence = ko.observable("V1");
-    self.current_building = ko.observable();
-    self.current_area = ko.observable();
-    self.current_floor = ko.observable();
+    self.current_residence = ko.observable(stored_current_residence).extend({save_setting: "current_residence"});;
+    self.current_building = ko.observable(stored_current_building).extend({save_setting: "current_building"});
+    self.current_area = ko.observable(stored_current_area).extend({save_setting: "current_area"});
+    self.current_floor = ko.observable(stored_current_floor).extend({save_setting: "current_floor"});
 
     self.current_areas = ko.dependentObservable(function(){
       return self.areas_map(self.current_residence());
@@ -282,18 +433,6 @@ $(function(){
       window.localStorage.clear();
       window.location.reload(true);
     };
-
-    ////
-    // Observables Extenders
-    ////
-
-    ko.extenders.save_device_setting_to_server = function(target, option){
-      target.subscribe(function(newValue){
-        console.log('Should save to server:' + option + '=' + newValue);
-        // $.post(serveraddress + '/device')
-      });
-      return target;
-    }
 
     //////
     // Parses given ISO-8601 timestamp to a relative time

@@ -12,17 +12,15 @@
     <script src='lib/phonegap-1.4.1.js' type='text/javascript'></script>
     <script src='lib/knockout-2.0.0.js' type='text/javascript'></script>
     <script src='lib/jquery.timeago.js' type='text/javascript'></script>
-    <script src='javascripts/helper.js' type='text/javascript'></script>
+    <script src='lib/jquery.timers.js' type='text/javascript'></script>
     <!-- %script{:src => "javascripts/dontracker.js", :type => "text/javascript"} -->
   </head>
   <body>
     <div data-role='page' id='main'>
       <div data-position='fixed' data-role='header'>
-        <h1>
-          Location:
-          <span data-bind='text: current_location_text'></span>
-        </h1>
-        <a class='ui-btn-right' data-corners='false' href='#changeloc'>Change</a>
+        <h1 data-bind='text: current_location_text'></h1>
+        <a data-corners='false' href='#feedback'>Feedback</a>
+        <a class='ui-btn-right' data-corners='false' href='#changeloc'>Change Location</a>
         <div data-iconpos='bottom' data-role='navbar'>
           <ul>
             <li>
@@ -40,12 +38,13 @@
       </div>
       <!-- / Sightings -->
       <div data-role='content'>
+        <div class='ui-body-c' data-bind='visible: show_update_text' id='update_text'></div>
         <div id='lastupdated'>
           last updated:
           <strong class='test' data-bind='timeago: last_updated_at'></strong>
         </div>
         <ul class='ui-listview ui-listview-inset ui-corner-all ui-shadow' data-bind='foreach: sightings' data-role='listview' id='sightingslist'>
-          <li class='ui-li ui-li-static ui-body-c'>
+          <li class='ui-li ui-li-static ui-body-c' data-bind="attr: { 'data-danger_level': danger_level }">
             <p class='ui-li-aside ui-li-desc'>
               <strong class='timeago' data-bind='timeago: created_at'></strong>
             </p>
@@ -53,16 +52,15 @@
             <p class='ui-li-desc' data-bind='text: danger_level'></p>
           </li>
         </ul>
-        <button data-bind='click: clearStorage' data-icon='delete' data-role='button'>Clear Local Storage</button>
+        <div data-bind='if: development'>
+          <button data-bind='click: clearStorage' data-icon='delete' data-role='button'>Clear Local Storage</button>
+        </div>
       </div>
     </div>
     <div data-role='page' id='add'>
       <div data-position='fixed' data-role='header'>
         <a data-corners='false' data-rel='back'>Back</a>
-        <h1>
-          Location:
-          <span data-bind='text: current_location_text'></span>
-        </h1>
+        <h1 data-bind='text: current_location_text'></h1>
       </div>
       <form data-bind='submit: postSighting' data-role='fieldcontain' method='post'>
         <label class='select' for='selected_residence'>Residence</label>
@@ -81,14 +79,8 @@
         </select>
         <label class='select' for='dangerlevel'>Danger Level</label>
         <select data-bind='options: danger_levels, value: selected_danger_level' data-corners='false' id='dangerlevel' name='danger_level'></select>
-        <fieldset class='ui-grid-a'>
-          <div class='ui-block-a'>
-            <button data-icon='add' data-theme='b' type='Submit' value='Add Sighting'></button>
-          </div>
-          <div class='ui-block-b'>
-            <button data-bind='click: postCurrentLocationSighting' data-icon='home' data-theme='a' value='Use Current Location'></button>
-          </div>
-        </fieldset>
+        <button data-icon='add' data-theme='b' type='Submit' value='Add Sighting'></button>
+        <button data-bind='click: postCurrentLocationSighting' data-icon='home' data-theme='a' value='Use Current Location'></button>
         <p class='center'>
           Using current location will report your selected danger level
         </p>
@@ -97,10 +89,7 @@
     <div data-role='page' id='changeloc'>
       <div data-position='fixed' data-role='header'>
         <a data-corners='false' data-rel='back'>Save</a>
-        <h1>
-          Location:
-          <span data-bind='text: current_location_text'></span>
-        </h1>
+        <h1 data-bind='text: current_location_text'></h1>
       </div>
       <div data-role='fieldcontain'>
         <label class='select' for='current_residence'>Residence</label>
@@ -229,6 +218,16 @@
         <a data-role='button' href='#'>About</a>
         <a data-role='button' href='#'>Feedback</a>
       </hr>
+    </div>
+    <div data-role='page' id='feedback'>
+      <div data-position='fixed' data-role='header'>
+        <a data-corners='false' data-rel='back'>Back</a>
+        <h1>Feedback</h1>
+      </div>
+      <div class='center'>
+        Questions, comments, suggestions, hate mail, we love them all!
+      </div>
+      <strong></strong>
     </div>
   </body>
 </html>

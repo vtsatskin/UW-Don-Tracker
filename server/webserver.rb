@@ -21,10 +21,11 @@ end
 
 post '/sighting' do
   content_type :json
+  params[:ip_address] = request.ip;
   sighting = Sighting.create params
 
   if sighting.valid?
-    sighting.to_json
+    sighting.to_public_json
   else
     errors = sighting.errors.map { |k,v| "#{k}: #{v}" }
     [500, "Error creating sighting: #{errors}"]
@@ -33,7 +34,7 @@ end
 
 get '/sightings' do
   content_type :json
-  search_query = params.select { |k,v| Device::API_SEARCHABLE_ATTRS.include? k }
+  search_query = params.select { |k,v| Sighting::API_SEARCHABLE_ATTRS.include? k }
 
   # Set limit if not specified
   limit ||= 5
@@ -58,17 +59,25 @@ get '/sightings' do
     end
   end
 
-  Sighting.where(search_query).sort(:created_at.desc).limit(limit).to_json
+  sightings = Sighting.where(search_query).sort(:created_at.desc).limit(limit)
+  sightings.map { |s| s.to_public }.to_json
 end
 
 # Creates and returns a new Device (JSON)
 post '/device' do
   content_type :json
   device = Device.new
-  device.update_attributes_from_public(params, {
+  device.update_attributes_from_public(params).update_attributes({
     :ip_addresses => [request.ip],
     :user_agent   => request.user_agent,
-  }).to_public_json
+  })
+  if device.save
+    puts device.errors.map { |k,v| "#{k}: #{v}" }
+    device.to_public_json
+  else
+    errors = device.errors.map { |k,v| "#{k}: #{v}" }
+    [500, "Error saving your device: #{errors}"]
+  end
 end
 
 # Gets a Device from specified Token (JSON)
@@ -91,5 +100,16 @@ post '/device/:token/update' do
     device.to_public_json
   else
     [500, "No device found"]
+  end
+end
+
+get '/check_version/:version' do
+  current_version = "ALPHADEV"
+  update_text = "A new version is avaliable <a href='#'>download here</a>"
+
+  unless params[:version] == current_version
+    { :latest => false, :message => update_text }.to_json
+  else
+    { :latest => true }.to_json
   end
 end

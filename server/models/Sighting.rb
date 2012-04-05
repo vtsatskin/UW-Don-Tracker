@@ -1,31 +1,53 @@
 class Sighting
   include MongoMapper::Document
 
-  SANITIZED_KEYS = [ :residence, :area, :floor, :building, :danger_level ]
+  SANITIZED_KEYS = [ :residence, :area, :floor, :building, :danger_level, :device_token ]
+
+  API_PUBLIC_ATTRS = [
+    :residence,
+    :area,
+    :building,
+    :floor,
+    :created_at,
+    :danger_level,
+  ]
+
+  API_SEARCHABLE_ATTRS = [
+    :residence,
+    :area,
+    :building,
+    :floor,
+  ]
 
   # Reporter info
-  key :ip_address, String
-  key :session_id, String
+  key :ip_address,    String,   :required => true
+  key :device_token,  String,   :required => true
 
   # Location Info
-  key :residence, String,  :required => true
-  key :area,      String
-  key :floor,     String,  :required => true
-  key :building,  String,  :required => true
+  key :residence,     String,   :required => true
+  key :area,          String
+  key :floor,         String,   :required => true
+  key :building,      String
 
   # Report info
-  key :danger_level,  String, :required => true
+  key :danger_level,  String,   :required => true
 
   timestamps!
-  attr_accessible :residence, :area, :floor, :building, :danger_level
+  attr_accessible :residence, :area, :floor, :building, :danger_level, :device_token, :ip_address
 
-  before_save :format_data, :sanitize
+  before_save :sanitize!
 
-  def format_data
-    self.residence.upcase!
+  def to_public
+    hash = {}
+    API_PUBLIC_ATTRS.each { |key| hash[key] = self.send(key) }
+    hash
   end
 
-  def sanitize
+  def to_public_json
+    self.to_json(:only => API_PUBLIC_ATTRS)
+  end
+
+  def sanitize!
     SANITIZED_KEYS.each do |key|
       data = self.send(key)
       doc = Loofah.fragment(data)

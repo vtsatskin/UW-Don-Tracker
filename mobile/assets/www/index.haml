@@ -14,15 +14,14 @@
     %script{:src => "lib/phonegap-1.4.1.js", :type => "text/javascript"}
     %script{:src => "lib/knockout-2.0.0.js", :type => "text/javascript"}
     %script{:src => "lib/jquery.timeago.js", :type => "text/javascript"}
-    %script{:src => "javascripts/helper.js", :type => "text/javascript"}
+    %script{:src => "lib/jquery.timers.js", :type => "text/javascript"}
     / %script{:src => "javascripts/dontracker.js", :type => "text/javascript"}
   %body
     #main{"data-role" => "page"}
       %div{"data-position" => "fixed", "data-role" => "header"}
-        %h1
-          Location:
-          %span{"data-bind" => "text: current_location_text"}
-        %a.ui-btn-right{"data-corners" => "false", :href => "#changeloc"} Change
+        %h1{ "data-bind" => "text: current_location_text" }
+        %a{"data-corners" => "false", :href => "#feedback"} Feedback
+        %a.ui-btn-right{"data-corners" => "false", :href => "#changeloc"} Change Location
         %div{"data-iconpos" => "bottom", "data-role" => "navbar"}
           %ul
             %li
@@ -36,24 +35,24 @@
 
       // Sightings
       %div{"data-role" => "content"}
+        #update_text.ui-body-c{"data-bind" => "visible: show_update_text"}
         #lastupdated
           last updated: 
-          %strong.test{ "data-bind" => "timeago: last_updated_at" }
+          %strong.test{ "data-bind" => "timeago: last_updated_at" }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 
         %ul#sightingslist.ui-listview.ui-listview-inset.ui-corner-all.ui-shadow{"data-role" => "listview", "data-bind" => "foreach: sightings"}
-          %li.ui-li.ui-li-static.ui-body-c
+          %li.ui-li.ui-li-static.ui-body-c{ "data-bind" => "attr: { 'data-danger_level': danger_level }"}
             %p.ui-li-aside.ui-li-desc
               %strong.timeago{ "data-bind" => "timeago: created_at" }
             %h3.ui-li-heading{ "data-bind" => "text: locationString"}
             %p.ui-li-desc{ "data-bind" => "text: danger_level"}
-        %button{:'data-role' => "button", :'data-icon' => "delete", :'data-bind' => "click: clearStorage"} Clear Local Storage
+        %div{ "data-bind" => "if: development" }
+          %button{:'data-role' => "button", :'data-icon' => "delete", :'data-bind' => "click: clearStorage"} Clear Local Storage
 
     #add{"data-role" => "page"}
       %div{"data-position" => "fixed", "data-role" => "header"}
         %a{"data-corners" => "false", "data-rel" => "back"} Back
-        %h1
-          Location:
-          %span{"data-bind" => "text: current_location_text"}
+        %h1{ "data-bind" => "text: current_location_text" }
       %form{"data-role" => "fieldcontain", "data-bind" => "submit: postSighting", :method => 'post' }
         %label.select{:for => "selected_residence" } Residence
         %select#selected_residence{ :name => 'residence', "data-corners" => "false", "data-bind" => "options: residences, value: selected_residence" }
@@ -73,20 +72,15 @@
         %label.select{:for => "dangerlevel" } Danger Level
         %select#dangerlevel{ :name => 'danger_level', "data-corners" => "false", "data-bind" => "options: danger_levels, value: selected_danger_level"}
           
-        %fieldset.ui-grid-a
-          .ui-block-a
-            %button{:type => "Submit", :value => "Add Sighting", "data-theme" => "b", "data-icon" => "add" }
-          .ui-block-b
-            %button{:value => "Use Current Location", "data-theme" => "a", "data-icon" => "home", "data-bind" => "click: postCurrentLocationSighting" }
+        %button{:type => "Submit", :value => "Add Sighting", "data-theme" => "b", "data-icon" => "add" }
+        %button{:value => "Use Current Location", "data-theme" => "a", "data-icon" => "home", "data-bind" => "click: postCurrentLocationSighting" }
         %p.center
           Using current location will report your selected danger level
 
     #changeloc{"data-role" => "page"}
       %div{"data-position" => "fixed", "data-role" => "header"}
         %a{"data-corners" => "false", "data-rel" => "back"} Save
-        %h1
-          Location:
-          %span{"data-bind" => "text: current_location_text"}
+        %h1{ "data-bind" => "text: current_location_text" }
 
       %div{"data-role" => "fieldcontain"}
         %label.select{:for => "current_residence" } Residence
@@ -194,3 +188,12 @@
       %hr
         %a{"data-role" => "button", :href => "#"} About
         %a{"data-role" => "button", :href => "#"} Feedback
+        
+    #feedback{"data-role" => "page"}
+      %div{"data-position" => "fixed", "data-role" => "header"}
+        %a{"data-corners" => "false", "data-rel" => "back"} Back
+        %h1 Feedback
+      .center
+        Questions, comments, suggestions, hate mail, we love them all!
+      %strong
+    
