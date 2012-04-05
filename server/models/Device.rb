@@ -1,5 +1,6 @@
 class Device
   include MongoMapper::Document
+  include NortonAntiVirus
 
   API_PUBLIC_ATTRS = [
     :token,
@@ -54,17 +55,5 @@ class Device
     end until Device.find_by_token(token).nil?
     
     self.token = token
-  end
-
-  def to_public_json
-    self.to_json(:only => API_PUBLIC_ATTRS)
-  end
-
-  def update_attributes_from_public public_params = {}
-    filtered_params = public_params.select { |key, value| API_UPDATABLE_ATTRS.include? key.to_sym }
-
-    self.update_attributes filtered_params unless filtered_params.empty?
-    self.save
-    return self
   end
 end

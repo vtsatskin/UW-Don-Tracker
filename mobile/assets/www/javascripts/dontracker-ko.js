@@ -5,6 +5,12 @@ var version_check_delay = 3600000; // 1 hour in milliseconds
 var version_last_checked = Date.parse(window.localStorage.getItem("version_last_checked"));
 var device_token = window.localStorage.getItem("device_token");
 
+var ERROR_CODES = {
+  L2ENGLISH:      "Communication error (feedback)",
+  STRANGERDANGER: "No device found",
+  WHYYOULIE: "Error creating sighting",
+}
+
 $(document).bind("mobileinit", function(){
   $.mobile.ajaxEnabled = false;
   $.mobile.allowCrossDomainPages = true;

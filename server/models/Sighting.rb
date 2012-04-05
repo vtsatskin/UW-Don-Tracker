@@ -1,5 +1,6 @@
 class Sighting
   include MongoMapper::Document
+  include NortonAntiVirus
 
   SANITIZED_KEYS = [ :residence, :area, :floor, :building, :danger_level, :device_token ]
 
@@ -36,16 +37,6 @@ class Sighting
   attr_accessible :residence, :area, :floor, :building, :danger_level, :device_token, :ip_address
 
   before_save :sanitize!
-
-  def to_public
-    hash = {}
-    API_PUBLIC_ATTRS.each { |key| hash[key] = self.send(key) }
-    hash
-  end
-
-  def to_public_json
-    self.to_json(:only => API_PUBLIC_ATTRS)
-  end
 
   def sanitize!
     SANITIZED_KEYS.each do |key|

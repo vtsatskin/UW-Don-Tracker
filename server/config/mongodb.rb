@@ -16,4 +16,5 @@ MongoMapper.database = DATABASE
 puts "Connecting to: #{DATABASE}"
 
 MongoMapper.connection.connect
+Dir[Dir.pwd + '/lib/*.rb'].each {|file| load file } # load stuff
 Dir[Dir.pwd + '/models/*.rb'].each {|file| load file } # load Models
