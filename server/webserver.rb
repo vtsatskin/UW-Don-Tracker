@@ -53,7 +53,7 @@ get '/sightings' do
 
   # Return only queries since specified time
   # A relative or concrete time may be given
-  if params[:since]
+  if params[:since] && !params[:since].empty? && params[:since] != "null"
     since = Time.parse(params[:since])
     search_query[:created_at.gte] = since
   end
