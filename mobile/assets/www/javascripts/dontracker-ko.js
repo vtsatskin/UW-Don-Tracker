@@ -1,4 +1,4 @@
-var development = true;
+var development = false;
 var serveraddress = development ? "http://10.0.0.78:4567" : "http://uwdt.vtsatskin.com:4567";
 var version = "ALPHADEV";
 var version_check_delay = 3600000; // 1 hour in milliseconds
@@ -9,6 +9,7 @@ var ERROR_CODES = {
   L2ENGLISH:      "Communication error (feedback)",
   STRANGERDANGER: "No device found",
   WHYYOULIE: "Error creating sighting",
+  TALKTOTHEHAND: "Error creating feedback",
 }
 
 $(document).bind("mobileinit", function(){
