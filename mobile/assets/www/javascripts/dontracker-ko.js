@@ -438,10 +438,32 @@ $(function(){
       });
     };
 
+    //////
+	// Submit Feedback
+	////
+    self.feedbacktext = ko.observable();
+	self.submitFeedback = function() {
+		params = {
+		          message:    self.feedbacktext(),
+		          
+		          device_token:  device_token,
+		        };
+				
+			  
+		$.post(serveraddress + "/feedback", params, function(data){
+		$.mobile.changePage('index.html');
+		$.mobile.hidePageLoadingMsg();
+	},'json')
+		.error(function(data){
+		    alert("There was an error adding your sighting: " + data.responseText)
+		    $.mobile.hidePageLoadingMsg();
+		 		});
+		
+	};
+	
     ////
     // Utilities
     ////
-
     self.clearStorage = function(){
       window.localStorage.clear();
       window.location.reload(true);
@@ -472,3 +494,5 @@ $(function(){
 
   ko.applyBindings(new AppViewModel());
 });
+
+	
