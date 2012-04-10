@@ -20,7 +20,7 @@
       <div data-position='fixed' data-role='header'>
         <h1 data-bind='text: current_location_text'></h1>
         <a data-corners='false' href='#feedback'>Feedback</a>
-        <a class='ui-btn-right' data-corners='false' href='#changeloc'>Change Location</a>
+        <a class='ui-btn-right' data-corners='false' href='#changeloc'>Change</a>
         <div data-iconpos='bottom' data-role='navbar'>
           <ul>
             <li>
@@ -79,7 +79,7 @@
         </select>
         <label class='select' for='dangerlevel'>Danger Level</label>
         <select data-bind='options: danger_levels, value: selected_danger_level' data-corners='false' id='dangerlevel' name='danger_level'></select>
-        <button data-icon='add' data-theme='b' type='Submit' value='Add Sighting'></button>
+        <button data-icon='add' data-theme='b' type='submit' value='Add Sighting'></button>
         <button data-bind='click: postCurrentLocationSighting' data-icon='home' data-theme='a' value='Use Current Location'></button>
         <p class='center'>
           Using current location will report your selected danger level
@@ -225,7 +225,9 @@
         <h1>Feedback</h1>
       </div>
       <div class='center'>
-        Questions, comments, suggestions, hate mail, we love them all!
+        <textarea data-bind="value: feedbacktext" id='feedbacktext'>Questions, comments, suggestions, hate mail, we love them all!</textarea>
+        <button data-bind='click: submitFeedback' data-theme='a' value='submit_feedback' data-inline='true'></button>
+        <p class='center'>
       </div>
       <strong></strong>
     </div>
