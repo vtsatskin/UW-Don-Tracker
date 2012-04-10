@@ -14,6 +14,10 @@ enable :static
 set :static_cache_control, [:public, :max_age => 300]
 set :public_folder, File.join(File.dirname(__FILE__), '..', 'mobile/assets/www')
 
+def json_error code, message
+  [500, { :errors => [ { :code => code, :message => message } ] }.to_json ]
+end
+
 # jQuery mobile insists on making forms AJAX
 post '/index.html' do
   "Stupid jQuery..."
@@ -28,7 +32,7 @@ post '/sighting' do
     sighting.to_public_json
   else
     errors = sighting.errors.map { |k,v| "#{k}: #{v}" }
-    [500, "Error creating sighting: #{errors}"]
+    json_error "WHYYOULIE", "Error creating sighting: #{errors}"
   end
 end
 
@@ -49,14 +53,9 @@ get '/sightings' do
 
   # Return only queries since specified time
   # A relative or concrete time may be given
-  if params[:since]
-    begin
-      since = Time.parse(params[:since])
-      search_query[:created_at.gte] = since
-    rescue => e
-      # TODO: include errors in results                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  # 
-      # [500, 'Invalid Time given for since parameter']
-    end
+  if params[:since] && !params[:since].empty? && params[:since] != "null"
+    since = Time.parse(params[:since])
+    search_query[:created_at.gte] = since
   end
 
   sightings = Sighting.where(search_query).sort(:created_at.desc).limit(limit)
@@ -72,11 +71,9 @@ post '/device' do
     :user_agent   => request.user_agent,
   })
   if device.save
-    puts device.errors.map { |k,v| "#{k}: #{v}" }
     device.to_public_json
   else
-    errors = device.errors.map { |k,v| "#{k}: #{v}" }
-    [500, "Error saving your device: #{errors}"]
+    json_error "STRANGERDANGER", "No device found"
   end
 end
 
@@ -87,7 +84,7 @@ get '/device/:token' do
   if device = Device.find_by_token(params[:token])
     device.to_public_json
   else
-    [500, "No device found"]
+    json_error "STRANGERDANGER", "No device found"
   end
 end
 
@@ -99,7 +96,7 @@ post '/device/:token/update' do
     device.update_attributes_from_public params
     device.to_public_json
   else
-    [500, "No device found"]
+    json_error "STRANGERDANGER", "No device found"
   end
 end
 
@@ -112,5 +109,24 @@ get '/check_version/:version' do
     { :latest => false, :message => update_text }.to_json
   else
     { :latest => true }.to_json
+  end
+end
+
+# Params: device_token, message
+post '/feedback' do
+  if device = Device.find_by_token(params[:device_token])
+    f = Feedback.new({
+      :device_token => device.token,
+      :message => params[:message],
+      :ip_address => request.ip,
+    })
+    if f.save
+      f.to_public_json
+    else
+      errors = f.errors.map { |k,v| "#{k}: #{v}" }
+      json_error "TALKTOTHEHAND", "Error creating feedback: #{errors}"
+    end
+  else
+    json_error "STRANGERDANGER", "No device found"
   end
 end
