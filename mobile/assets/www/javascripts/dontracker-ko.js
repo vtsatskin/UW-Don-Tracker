@@ -455,7 +455,7 @@ $(function(){
 		$.mobile.hidePageLoadingMsg();
 	},'json')
 		.error(function(data){
-		    alert("There was an error adding your sighting: " + data.responseText)
+		    alert("Error Submitting Feedback: " + data.responseText)
 		    $.mobile.hidePageLoadingMsg();
 		 		});
 		
