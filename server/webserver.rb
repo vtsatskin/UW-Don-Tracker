@@ -102,7 +102,7 @@ end
 
 get '/check_version/:version' do
   # Upcoming: ALPHADEV2
-  current_version = "ALPHADEV"
+  current_version = "0.1.2"
   update_text = "A new version is avaliable <a href='https://build.phonegap.com/apps/96858/share'>download here</a>"
 
   unless params[:version] == current_version

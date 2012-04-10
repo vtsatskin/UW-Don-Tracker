@@ -1,6 +1,6 @@
 var development = false;
 var serveraddress = development ? "http://10.0.0.78:4567" : "http://uwdt.vtsatskin.com:4567";
-var version = "ALPHADEV";
+var version = "0.1.2";
 var version_check_delay = 3600000; // 1 hour in milliseconds
 var version_last_checked = Date.parse(window.localStorage.getItem("version_last_checked"));
 var device_token = window.localStorage.getItem("device_token");
