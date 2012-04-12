@@ -10,10 +10,13 @@
     <script src='javascripts/dontracker-ko.js' type='text/javascript'></script>
     <script src='lib/jquery.mobile/jquery.mobile-1.0.1.js' type='text/javascript'></script>
     <script src='lib/phonegap-1.4.1.js' type='text/javascript'></script>
+    <script src="lib/C2DMPlugin.js"></script> <!-- C2DM Phone Gap plugin -->
     <script src='lib/knockout-2.0.0.js' type='text/javascript'></script>
     <script src='lib/jquery.timeago.js' type='text/javascript'></script>
     <script src='lib/jquery.timers.js' type='text/javascript'></script>
+    <script src='javascripts/c2dm.js' type='text/javascript'></script>
     <!-- %script{:src => "javascripts/dontracker.js", :type => "text/javascript"} -->
+    
   </head>
   <body>
     <div data-role='page' id='main'>
@@ -79,12 +82,19 @@
         </select>
         <label class='select' for='dangerlevel'>Danger Level</label>
         <select data-bind='options: danger_levels, value: selected_danger_level' data-corners='false' id='dangerlevel' name='danger_level'></select>
+        <div align='center'>
+        <fieldset style="" data-role="controlgroup" data-type="horizontal">
         <button data-icon='add' data-theme='b' type='submit' value='Add Sighting'></button>
-        <button data-bind='click: postCurrentLocationSighting' data-icon='home' data-theme='a' value='Use Current Location'></button>
+        <button data-bind='click: postCurrentLocationSighting' data-icon='home' data-theme='a' value='Use Current'></button>
+        </fieldset>
+        </div>
         <p class='center'>
           Using current location will report your selected danger level
         </p>
+        
+        
       </form>
+      
     </div>
     <div data-role='page' id='changeloc'>
       <div data-position='fixed' data-role='header'>
@@ -226,7 +236,7 @@
       </div>
       <div class='center'>
         <textarea data-bind="value: feedbacktext" id='feedbacktext'>Questions, comments, suggestions, hate mail, we love them all!</textarea>
-        <button data-bind='click: submitFeedback' data-theme='a' value='submit_feedback' data-inline='true'></button>
+        <button data-corners='false' data-bind='click: submitFeedback' data-theme='a' value='submit_feedback' data-inline='true'>Submit</button>
         <p class='center'>
       </div>
       <strong></strong>

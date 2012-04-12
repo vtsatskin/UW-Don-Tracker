@@ -17,7 +17,7 @@ $(document).bind("mobileinit", function(){
   $.mobile.allowCrossDomainPages = true;
   $.support.cors = true;
   $.mobile.fixedToolbars.show(true);
-  // $.mobile.defaultPageTransition = 'none';
+  $.mobile.defaultPageTransition = 'none';
 });
 
 $(function(){
@@ -114,7 +114,23 @@ $(function(){
       } else {
         register_device();
       }
-    }
+      
+    ///////C2DM Registration!!
+		// This is the PhoneGap deviceready event. Once this is called PhoneGap is available to be used
+		gApp.DeviceReady = true;
+	
+		// Some Unique stuff here,
+		// The first Parm is your Google email address that you were authorized to use C2DM with
+		// the Event Processing rountine (2nd parm) we pass in the String name
+		// not a pointer to the routine, under the covers a JavaScript call is made so the name is used
+		// to generate the function name to call. I didn't know how to call a JavaScript routine from Java
+		// The last two parms are used by PhoneGap, they are the callback routines if the call is successful or fails
+		//
+		// CHANGE: your_c2dm_account@gmail.com
+		// TO: what ever your C2DM authorized email account name is
+		//
+		window.plugins.C2DM.register("uwdontracker@gmail.com", "C2DM_Event", C2DM_Success, C2DM_Fail );
+  	}
 
     ////
     // Updates
@@ -494,5 +510,3 @@ $(function(){
 
   ko.applyBindings(new AppViewModel());
 });
-
-	
