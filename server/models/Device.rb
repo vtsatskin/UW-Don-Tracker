@@ -12,6 +12,7 @@ class Device
 
   API_UPDATABLE_ATTRS = [
     :uuid,
+    :C2DM_id,
     :name,
     :phonegap,
     :platform,
